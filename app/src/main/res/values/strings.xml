@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Schedule</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="kommande_pass">Kommande pass</string>
+    <string name="oppna_bank_id">Öppna bank ID</string>
+    <string name="nogot_gick_snett">Något gick snett, försök igen</string>
+    <string name="antons_skafferi">Antons\nSkafferi</string>
+    <string name="requests">Förfrågningar</string>
+    <string name="decline">Avbryt</string>
+    <string name="accept">Acceptera</string>
+    <string name="till">Till: </string>
+    <string name="sjukanmalan">Sjukanmälan</string>
+</resources>
