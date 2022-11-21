@@ -1,7 +1,6 @@
 package com.example.schedule;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import androidx.annotation.NonNull;
 
 public class Staff {
     private final String socialSecurityNumber;
@@ -32,6 +31,7 @@ public class Staff {
         return phoneNumber;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return this.name; // Value to be displayed in the Spinner

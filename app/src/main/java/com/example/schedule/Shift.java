@@ -1,13 +1,12 @@
 package com.example.schedule;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -33,12 +32,12 @@ public class Shift {
     public String getUserId(){ return this.userId; }
 
     public String getDateString(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM");
         return dateFormat.format(date.getTime());
     }
 
-    public Calendar getDate(){
-        return date;
+    public int getDate(int Calendar){
+        return date.get(Calendar);
     }
 
     public String getStartTime(){
@@ -56,13 +55,14 @@ public class Shift {
         return "Kvällspass";
     }
 
-    public boolean hasPassed(){
-        Calendar c = Calendar.getInstance();
-        //c.set(Calendar.MONTH, -1);
-        if(date.before(c)){
-            return true;
-        }
-        return false;
+    public boolean hasNotPassed(){
+        return !date.before(Calendar.getInstance());
     }
 
+    public boolean isLate(){
+        if (stopTime.isBefore(LocalTime.of(16, 0))) {
+            return false;
+        }
+        return true;
+    }
 }

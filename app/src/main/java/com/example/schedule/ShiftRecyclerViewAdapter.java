@@ -1,18 +1,15 @@
 package com.example.schedule;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -63,7 +60,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
         String userID = ((Activity) context).getIntent().getStringExtra("id");
 
         //OM ANVÄNDAREN HAR PASS SKAPAS KNAPP
-        if(shifts.get(position).second.getUserId().contains(userID) && !shifts.get(position).second.hasPassed()){
+        if(shifts.get(position).second.getUserId().contains(userID) && shifts.get(position).second.hasNotPassed()){
             holder.swap.setVisibility(View.VISIBLE);
             holder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.dark_orange));
             holder.linearLayout.setOnClickListener(new View.OnClickListener() {

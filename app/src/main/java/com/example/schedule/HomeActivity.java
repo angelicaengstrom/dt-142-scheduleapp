@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
@@ -30,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     private final HashMap<String, Staff> staff = new HashMap<>();
     private final ArrayList<Request> request = new ArrayList<>();
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,33 +89,33 @@ public class HomeActivity extends AppCompatActivity {
     private void insertAllShifts(){
         Calendar c = Calendar.getInstance();
         c.set(2022, 10, 14);
-        Shift s3 = new Shift(0, c, LocalTime.of(16,00), LocalTime.of(23,00), "199905063641");
+        Shift s3 = new Shift(0, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
         allShifts.add(s3);
         c = Calendar.getInstance();
         c.set(2022, 10, 20);
-        s3 = new Shift(1, c, LocalTime.of(16,00), LocalTime.of(23,00), "199905063641");
+        s3 = new Shift(1, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
         allShifts.add(s3);
         c = Calendar.getInstance();
         c.set(2022, 10, 21);
-        s3 = new Shift(2, c, LocalTime.of(11,00), LocalTime.of(14,00), "200001011337");
+        s3 = new Shift(2, c, LocalTime.of(11,0), LocalTime.of(14,0), "200001011337");
         allShifts.add(s3);
-        s3 = new Shift(3, c, LocalTime.of(15,00), LocalTime.of(23,00), "199905063641");
+        s3 = new Shift(3, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
         allShifts.add(s3);
-        s3 = new Shift(4, c, LocalTime.of(16,00), LocalTime.of(23,00), "200001010337");
+        s3 = new Shift(4, c, LocalTime.of(16,0), LocalTime.of(23,0), "200001010337");
         allShifts.add(s3);
-        s3 = new Shift(5, c, LocalTime.of(16,00), LocalTime.of(23,00), "200101010337");
+        s3 = new Shift(5, c, LocalTime.of(16,0), LocalTime.of(23,0), "200101010337");
         allShifts.add(s3);
         c = Calendar.getInstance();
         c.set(2022, 10, 23);
-        s3 = new Shift(6, c, LocalTime.of(11,00), LocalTime.of(14,00), "200101010337");
+        s3 = new Shift(6, c, LocalTime.of(11,0), LocalTime.of(14,0), "200101010337");
         allShifts.add(s3);
         c = Calendar.getInstance();
         c.set(2022, 10, 21);
-        s3 = new Shift(7, c, LocalTime.of(16,00), LocalTime.of(23,00), "200201010337");
+        s3 = new Shift(7, c, LocalTime.of(16,0), LocalTime.of(23,0), "200201010337");
         allShifts.add(s3);
         c = Calendar.getInstance();
         c.set(2022, 10, 23);
-        s3 = new Shift(8, c, LocalTime.of(11,00), LocalTime.of(14,00), "199905063641");
+        s3 = new Shift(8, c, LocalTime.of(11,0), LocalTime.of(14,0), "199905063641");
         allShifts.add(s3);
     }
 
@@ -138,14 +140,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private void insertComingUserShifts(String user){
         for(Shift s : allShifts){
-            if(!s.hasPassed() && s.getUserId().contains(user)){
+            if(s.hasNotPassed() && s.getUserId().contains(user)){
                 comingShifts.add(s);
             }
         }
     }
 
     public List<Pair<String,Shift>> getShiftsAtDate(String date){
-        List<Pair<String,Shift>> temp = new ArrayList<Pair<String,Shift>>();
+        List<Pair<String,Shift>> temp = new ArrayList<>();
         for(Shift s : allShifts){
             if(s.getDateString().contains(date)){
                 String name = staff.get(s.getUserId()).getName();
@@ -166,11 +168,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public List<Pair<String,Shift>> getRequestToUser(String user){
-        List<Pair<String,Shift>> temp = new ArrayList<Pair<String,Shift>>();
+        List<Pair<String,Shift>> temp = new ArrayList<>();
         for(Request r : request){
             if(r.getUserId().contains(user)){
                 Shift s = allShifts.get(r.getShiftId());
-                if(!s.hasPassed()) {
+                if(s.hasNotPassed()) {
                     String name = staff.get(s.getUserId()).getName();
                     temp.add(new Pair<>(name, s));
                 }
