@@ -3,7 +3,6 @@ Schemaapp till 'Antons skafferi'. Testas och körs med *Pixel 5 API 30*.
 ## To-do:
 - [ ] javadoc
 - [ ] inloggning med BankID
-- [ ] Komma ihåg en inloggad användare, cookies?
 - [ ] Annan möjlighet att logga ut än att stänga ner applikationen
 - [ ] Hämta information från databas
 - [ ] Skicka information till databas
@@ -23,3 +22,4 @@ Schemaapp till 'Antons skafferi'. Testas och körs med *Pixel 5 API 30*.
 - [x] Skapa 'mer' sidan
 - [x] Skapa förfrågningar
 - [x] Skapa knappar i kalendern för den inloggades pass
+- [x] Komma ihåg en inloggad användare, sharedPreferences
