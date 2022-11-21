@@ -11,4 +11,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lateShift">#374A67</color>
     <color name="earlyShift">#6B9155</color>
+    <color name="error">#FF0000</color>
 </resources>

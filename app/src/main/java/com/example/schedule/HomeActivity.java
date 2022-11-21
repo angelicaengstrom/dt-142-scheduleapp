@@ -2,7 +2,6 @@ package com.example.schedule;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,19 +9,12 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
-import android.view.View;
 
 import com.example.schedule.databinding.ActivityHomeBinding;
-import com.example.schedule.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 
-import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,10 +25,10 @@ public class HomeActivity extends AppCompatActivity {
     Fragment scheduleFragment;
     Fragment moreFragment;
     public String amountOfShifts;
-    private ArrayList<Shift> comingShifts = new ArrayList<>();
-    private ArrayList<Shift> allShifts = new ArrayList<>();
-    private HashMap<String, Staff> staff = new HashMap<>();
-    private ArrayList<Request> request = new ArrayList<>();
+    private final ArrayList<Shift> comingShifts = new ArrayList<>();
+    private final ArrayList<Shift> allShifts = new ArrayList<>();
+    private final HashMap<String, Staff> staff = new HashMap<>();
+    private final ArrayList<Request> request = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
         c.set(2022, 10, 21);
         s3 = new Shift(2, c, LocalTime.of(11,00), LocalTime.of(14,00), "200001011337");
         allShifts.add(s3);
-        s3 = new Shift(3, c, LocalTime.of(16,00), LocalTime.of(23,00), "199905063641");
+        s3 = new Shift(3, c, LocalTime.of(15,00), LocalTime.of(23,00), "199905063641");
         allShifts.add(s3);
         s3 = new Shift(4, c, LocalTime.of(16,00), LocalTime.of(23,00), "200001010337");
         allShifts.add(s3);
@@ -157,7 +149,7 @@ public class HomeActivity extends AppCompatActivity {
         for(Shift s : allShifts){
             if(s.getDateString().contains(date)){
                 String name = staff.get(s.getUserId()).getName();
-                temp.add(new Pair<String,Shift>(name, s));
+                temp.add(new Pair<>(name, s));
             }
         }
         return temp;
@@ -180,7 +172,7 @@ public class HomeActivity extends AppCompatActivity {
                 Shift s = allShifts.get(r.getShiftId());
                 if(!s.hasPassed()) {
                     String name = staff.get(s.getUserId()).getName();
-                    temp.add(new Pair<String, Shift>(name, s));
+                    temp.add(new Pair<>(name, s));
                 }
             }
         }

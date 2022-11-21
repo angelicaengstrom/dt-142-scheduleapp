@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/error_log_in.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.193" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_launcher_background.xml" value="0.193" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/txtclick.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/activity_home.xml" value="0.1956521739130435" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/fragment_schedule.xml" value="0.1" />
       </map>

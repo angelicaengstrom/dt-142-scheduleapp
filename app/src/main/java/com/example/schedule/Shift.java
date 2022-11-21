@@ -57,7 +57,9 @@ public class Shift {
     }
 
     public boolean hasPassed(){
-        if(date.before(Calendar.getInstance())){
+        Calendar c = Calendar.getInstance();
+        //c.set(Calendar.MONTH, -1);
+        if(date.before(c)){
             return true;
         }
         return false;
