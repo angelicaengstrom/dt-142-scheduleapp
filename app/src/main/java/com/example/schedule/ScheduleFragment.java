@@ -173,7 +173,7 @@ public class ScheduleFragment extends Fragment {
         }
 
         /** Överskriver interfacets onMonthScroll metod som innefattar uppdatering av rubriken ovanför kalendern
-         * @param firstDayOfNewMonth datum som var tryckt.
+         * @param firstDayOfNewMonth datum som byttes.
          */
         @Override
         public void onMonthScroll(Date firstDayOfNewMonth) {
