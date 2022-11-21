@@ -1,7 +1,6 @@
 package com.example.schedule;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -32,13 +31,22 @@ import java.util.Date;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ScheduleFragment extends Fragment {
-    RecyclerView recyclerView;
     HomeActivity home;
-    TextView selectedYearTxt;
-    ImageView arrow;
+    /** Representerar kalendersidans kalender
+     */
     CompactCalendarView compactCalendarView;
+    /** Representerar kalenderns rubrik
+     */
     LinearLayout calenderHeader;
-    TextView labelSelectedDay;
+    TextView calenderHeaderTxt;
+    ImageView calenderHeaderArrow;
+
+    /** Representerar kalendersidans skift
+     */
+    RecyclerView recyclerView;
+    /** Representerar skiftens rubrik
+     */
+    TextView recyclerViewDateLabel;
 
     SimpleDateFormat shortDayFormat;
     SimpleDateFormat longDayFormat;
@@ -88,7 +96,6 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
         home = (HomeActivity) getActivity();
@@ -99,16 +106,16 @@ public class ScheduleFragment extends Fragment {
 
         Calendar cal = Calendar.getInstance();
 
-        arrow = view.findViewById(R.id.arrowCalenderView);
-        selectedYearTxt = view.findViewById(R.id.labelCalenderView);
+        calenderHeaderArrow = view.findViewById(R.id.arrowCalenderView);
+        calenderHeaderTxt = view.findViewById(R.id.labelCalenderView);
 
-        selectedYearTxt.setText(monthYearFormat.format(cal.getTime()));
+        calenderHeaderTxt.setText(monthYearFormat.format(cal.getTime()));
 
         calenderHeader = view.findViewById(R.id.layoutCalenderTxt);
         calenderHeader.setOnClickListener(new calenderHeaderListener());
 
-        labelSelectedDay = view.findViewById(R.id.txtCalenderView);
-        labelSelectedDay.setText(longDayFormat.format(cal.getTime()));
+        recyclerViewDateLabel = view.findViewById(R.id.txtCalenderView);
+        recyclerViewDateLabel.setText(longDayFormat.format(cal.getTime()));
 
         recyclerView = view.findViewById(R.id.shiftRecyclerView);
         recyclerView.setAdapter(getAdapter(shortDayFormat.format(cal.getTime())));
@@ -133,10 +140,10 @@ public class ScheduleFragment extends Fragment {
         public void onClick(View view) {
             if (compactCalendarView.getVisibility() != View.VISIBLE) {
                 compactCalendarView.setVisibility(View.VISIBLE);
-                arrow.animate().rotation(180).start();
+                calenderHeaderArrow.animate().rotation(180).start();
             } else {
                 compactCalendarView.setVisibility(View.GONE);
-                arrow.animate().rotation(0).start();
+                calenderHeaderArrow.animate().rotation(0).start();
             }
         }
     }
@@ -158,7 +165,7 @@ public class ScheduleFragment extends Fragment {
          */
         @Override
         public void onDayClick(Date dateClicked) {
-            labelSelectedDay.setText(longDayFormat.format(dateClicked));
+            recyclerViewDateLabel.setText(longDayFormat.format(dateClicked));
 
             String date = shortDayFormat.format(dateClicked);
             recyclerView.setAdapter(getAdapter(date));
@@ -170,7 +177,7 @@ public class ScheduleFragment extends Fragment {
          */
         @Override
         public void onMonthScroll(Date firstDayOfNewMonth) {
-            selectedYearTxt.setText(monthYearFormat.format(firstDayOfNewMonth));
+            calenderHeaderTxt.setText(monthYearFormat.format(firstDayOfNewMonth));
         }
     }
 
