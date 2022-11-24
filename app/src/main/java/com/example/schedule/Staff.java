@@ -2,6 +2,9 @@ package com.example.schedule;
 
 import androidx.annotation.NonNull;
 
+/**
+ * En klass som beskriver en arbetare från restaurangen Antons Skafferi
+ */
 public class Staff {
     private final String socialSecurityNumber;
     private final String name;
@@ -31,9 +34,12 @@ public class Staff {
         return phoneNumber;
     }
 
+    /** Överskriver toString metoden och sätter hur klassen ska skrivas ut.
+     *  Detta används bland annat i en Spinner för att skriva ut en läsbara arbetare som är lediga under en viss dag
+     */
     @NonNull
     @Override
     public String toString() {
-        return this.name; // Value to be displayed in the Spinner
+        return this.name;
     }
 }

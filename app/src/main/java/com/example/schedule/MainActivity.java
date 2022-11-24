@@ -12,7 +12,17 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.schedule.json.Employee;
+import com.example.schedule.json.EmployeeAPI;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
@@ -27,16 +37,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view){
             user = textInputLayout.getEditText().getText().toString();
-            if(user.contains("199905063641")) {
-                saveData();
-                Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
-                homeAct.putExtra("id", user);
-                startActivity(homeAct);
-                finish();
-            }else {
-                textInputLayout.setError(getString(R.string.nogot_gick_snett));
-                textInputLayout.setErrorEnabled(true);
-            }
+            connect(user);
         }
     }
 
@@ -91,14 +92,51 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         user = sharedPreferences.getString(USER, null);
         //FÖR ATT ÅTERSTÄLLA
-        /*SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USER, null);
-        editor.apply();*/
+        editor.apply();
         if(user != null){
             Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
             homeAct.putExtra("id", user);
             startActivity(homeAct);
             finish();
         }
+    }
+
+    void connect(String id){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+        Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
+        call.enqueue(new Callback<List<Employee>>() {
+            @Override
+            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+                if(!response.isSuccessful()) {
+                    textInputLayout.setError(getString(R.string.nogot_gick_snett));
+                    textInputLayout.setErrorEnabled(true);
+                    return;
+                }
+                List<Employee> employee = response.body();
+                if(!employee.isEmpty()) {
+                    saveData();
+                    Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
+                    homeAct.putExtra("id", user);
+                    startActivity(homeAct);
+                    finish();
+                }else{
+                    textInputLayout.setError(getString(R.string.nogot_gick_snett));
+                    textInputLayout.setErrorEnabled(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Employee>> call, Throwable t) {
+                textInputLayout.setError(getString(R.string.server_fail));
+                textInputLayout.setErrorEnabled(true);
+            }
+        });
     }
 }

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/txtclick"
+            android:background="@drawable/white_square"
             android:padding="10dp">
 
             <TextView
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/txtclick"
+                    android:background="@drawable/white_square"
                     android:contentDescription="@string/accept"
                     app:srcCompat="@drawable/ic_baseline_check_24" />
 
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/txtclick"
+                    android:background="@drawable/white_square"
                     android:contentDescription="@string/decline"
                     app:srcCompat="@drawable/ic_baseline_clear_24" />
             </LinearLayout>

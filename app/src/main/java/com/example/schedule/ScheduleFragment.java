@@ -52,6 +52,8 @@ public class ScheduleFragment extends Fragment {
     SimpleDateFormat longDayFormat;
     SimpleDateFormat monthYearFormat;
 
+    Date clickedDate;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -60,6 +62,10 @@ public class ScheduleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    public ScheduleFragment(Date dateClicked) {
+        clickedDate = dateClicked;
+    }
 
     public ScheduleFragment() {
         // Required empty public constructor
@@ -100,7 +106,7 @@ public class ScheduleFragment extends Fragment {
 
         home = (HomeActivity) getActivity();
 
-        shortDayFormat = new SimpleDateFormat("d MMM");
+        shortDayFormat = new SimpleDateFormat("yyyy-MM-dd");
         longDayFormat = new SimpleDateFormat("d MMMM");
         monthYearFormat = new SimpleDateFormat("MMMM yyyy");
 
@@ -123,6 +129,10 @@ public class ScheduleFragment extends Fragment {
 
         compactCalendarView = view.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setListener(new dateChangeListener());
+
+        if(clickedDate != null) {
+            compactCalendarView.setCurrentDate(clickedDate);
+        }
 
         setEvents(home.getComingShifts());
 
@@ -168,8 +178,7 @@ public class ScheduleFragment extends Fragment {
             recyclerViewDateLabel.setText(longDayFormat.format(dateClicked));
 
             String date = shortDayFormat.format(dateClicked);
-            recyclerView.setAdapter(getAdapter(date));
-            recyclerView.setLayoutManager(new LinearLayoutManager(home));
+            home.getShiftsAtDate(date);
         }
 
         /** Överskriver interfacets onMonthScroll metod som innefattar uppdatering av rubriken ovanför kalendern

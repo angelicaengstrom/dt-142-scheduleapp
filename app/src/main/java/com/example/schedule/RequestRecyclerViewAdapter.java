@@ -18,12 +18,38 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.schedule.json.Employee;
+import com.example.schedule.json.EmployeeAPI;
+import com.example.schedule.json.Request2;
+import com.example.schedule.json.Shift2;
+import com.example.schedule.json.ShiftAPI;
+import com.example.schedule.json.UpdateResponse;
+import com.example.schedule.json.body;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * En klass som ärver av RecyclerView.Adapter
+ * Innefattar metoder till hemsidans revyclerview adapter för att visa förfrågningar till användaren
+ */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecyclerViewAdapter.MyViewHolder>{
     Context context;
+    /**En lista av skift samt namn på arbetaren som skickat förfrågan
+     * */
     List<Pair<String,Shift>> shifts;
+
+    /** Konstruktor som tilldelar skift och context
+     */
     public RequestRecyclerViewAdapter(Context context, List<Pair<String,Shift>> shifts){
         this.context = context;
         this.shifts = shifts;
@@ -53,14 +79,49 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Du vill ha");
+                //AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                //builder.setTitle("Du vill ha");
 
                 String userID = ((Activity) context).getIntent().getStringExtra("id");
                 if(userID != null){
-                    builder.setMessage("POST HTTP REQUEST: ShiftID: " + view.getId() + " to userID: " + userID);
-                    AlertDialog ad = builder.create();
-                    ad.show();
+                    //builder.setMessage("POST HTTP REQUEST: ShiftID: " + view.getId() + " to userID: " + userID);
+                    //AlertDialog ad = builder.create();
+                    //ad.show();
+
+                    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+                    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+                    OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
+
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(okHttpClient)
+                            .build();
+
+                    ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
+
+                    //TEMPORÄR
+                    body b = new body();
+                    b.setEmployeeId(userID);
+                    b.setShiftId(view.getId());
+
+                    UpdateResponse updateResponse = new UpdateResponse();
+                    updateResponse.setId(view.getId());
+                    updateResponse.setSsn(userID);
+
+                    Call<Shift2> call = shiftAPI.updateShift(updateResponse);
+                    call.enqueue(new Callback<Shift2>() {
+                        @Override
+                        public void onResponse(Call<Shift2> call, Response<Shift2> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<Shift2> call, Throwable t) {
+
+                        }
+                    });
                 }
             }
         });

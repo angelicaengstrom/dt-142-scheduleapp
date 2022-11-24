@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
 
+/**
+ * En klass som beskriver en arbetares skift från restaurangen Antons Skafferi
+ */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class Shift {
     private final int id;
@@ -16,13 +19,19 @@ public class Shift {
     private final LocalTime startTime;
     private final LocalTime stopTime;
     private final String userId;
+    /**
+     * Hur medlemmen date ska formateras
+     */
+    private final SimpleDateFormat dateFormat;
 
+    @SuppressLint("SimpleDateFormat")
     Shift(int id, Calendar date, LocalTime starttime, LocalTime stoptime, String uid){
         this.id = id;
         this.date = date;
         this.startTime = starttime;
         this.stopTime = stoptime;
         this.userId = uid;
+        this.dateFormat = new SimpleDateFormat("d MMM");
     }
 
     public int getId(){
@@ -31,13 +40,19 @@ public class Shift {
 
     public String getUserId(){ return this.userId; }
 
+    /**
+     * Hämtar datumet som String enligt ett format via medlemmen dateFormat
+     */
     public String getDateString(){
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM");
         return dateFormat.format(date.getTime());
     }
 
-    public int getDate(int Calendar){
-        return date.get(Calendar);
+    /**
+     * Hämtar datum från medlemmen date
+     * @param calendar är vad från date som ska hämtas (ex. Calendar.YEAR ger året)
+     */
+    public int getDate(int calendar){
+        return date.get(calendar);
     }
 
     public String getStartTime(){
@@ -48,21 +63,30 @@ public class Shift {
         return this.stopTime.toString();
     }
 
+    /**
+     * Hämtar om passinformation beroende på isLate()
+     * @return Kvällspass eller Lunchpass
+     */
     public String getShift(){
-        if (stopTime.isBefore(LocalTime.of(16, 0))) {
-            return "Lunchpass";
+        if(isLate()) {
+            return "Kvällspass";
         }
-        return "Kvällspass";
+        return "Lunchpass";
     }
 
+    /**
+     * Hämtar om skiftets datum inte har passerat dagens datum
+     * @return true eller false
+     */
     public boolean hasNotPassed(){
         return !date.before(Calendar.getInstance());
     }
 
+    /**
+     * Hämtar om skiftet är ett sent eller tidigt pass
+     * @return true eller false
+     */
     public boolean isLate(){
-        if (stopTime.isBefore(LocalTime.of(16, 0))) {
-            return false;
-        }
-        return true;
+        return !stopTime.isBefore(LocalTime.of(16, 0));
     }
 }

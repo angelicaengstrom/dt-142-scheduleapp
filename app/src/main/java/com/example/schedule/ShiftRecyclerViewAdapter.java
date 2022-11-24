@@ -20,12 +20,17 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
+/**
+ * En klass som ärver av RecyclerView.Adapter
+ * Innefattar metoder till kalendersidans recyclerview adapter för att visa arbetspass under ett visst datum
+ */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecyclerViewAdapter.ShiftViewHolder> {
     Context context;
-    /**En lista av skift och namn på arbetaren
+    /**En lista av skift samt namn på arbetaren
      * */
     List<Pair<String,Shift>> shifts;
 
@@ -115,7 +120,10 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
          */
         tradeShiftListener(ShiftViewHolder holder){
             this.holder = holder;
-            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(shifts);
+            int year = shifts.get(0).second.getDate(Calendar.YEAR);
+            int month = shifts.get(0).second.getDate(Calendar.MONTH) + 1;
+            int day = shifts.get(0).second.getDate(Calendar.DAY_OF_MONTH);
+            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(year + "-" + month + "-" + day);
         }
 
         /** Överskriver interfacets onClick metod som innefattar ett popup fönster ifall tryckt

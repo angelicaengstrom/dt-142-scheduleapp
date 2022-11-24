@@ -130,9 +130,6 @@ public class HomeFragment extends Fragment {
             List<Pair<String,Shift>> requests = home.getRequestToUser(user);
             requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(home, requests));
             requestRecyclerView.setLayoutManager(new LinearLayoutManager(home));
-            TextView requestLabelTxt = view.findViewById(R.id.txtRequests);
-            String requestStr = requestLabelTxt.getText() + " (" + requests.size() + ")";
-            requestLabelTxt.setText(requestStr);
         }
         return view;
     }

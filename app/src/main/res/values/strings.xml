@@ -5,6 +5,7 @@
     <string name="kommande_pass">Kommande pass</string>
     <string name="verifiera">Verifiera dig</string>
     <string name="nogot_gick_snett">Du är inte registrerad, kontakta Anders</string>
+    <string name="server_fail">Något gick fel, försök igen senare</string>
     <string name="anton">Antons</string>
     <string name="skafferi">Skafferi</string>
     <string name="requests">Förfrågningar</string>
