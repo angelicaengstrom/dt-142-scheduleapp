@@ -23,6 +23,7 @@ public interface ShiftAPI {
     @GET("shift")
     Call<List<Shift2>> allShift();
 
+    @Headers("content-type: application/json")
     @PUT("shift/change-employee")
-    Call<Shift2> updateShift(@Body UpdateResponse updateResponse);
+    Call<String> updateShift(@Body UpdateResponse updateResponse);
 }

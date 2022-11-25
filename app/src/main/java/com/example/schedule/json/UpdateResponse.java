@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class UpdateResponse {
-    private int id;
     private String ssn;
+    private int id;
 
     public int getId() {
         return id;

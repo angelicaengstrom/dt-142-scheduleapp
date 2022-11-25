@@ -92,9 +92,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         user = sharedPreferences.getString(USER, null);
         //FÖR ATT ÅTERSTÄLLA
+        /*
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USER, null);
-        editor.apply();
+        editor.apply();*/
         if(user != null){
             Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
             homeAct.putExtra("id", user);

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,10 +83,19 @@ public class HomeFragment extends Fragment {
 
         secondShift = view.findViewById(R.id.secondShift);
         firstShift = view.findViewById(R.id.firstShift);
+        requestRecyclerView = view.findViewById(R.id.requestRecyclerView);
 
         //TextView 'KOMMANDE PASS'
         TextView shiftLabel = view.findViewById(R.id.txtComingShift);
         if(home != null) {
+            List<Pair<String,Shift>> requests = home.getRequestToMe();
+            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(home, requests));
+            requestRecyclerView.setLayoutManager(new LinearLayoutManager(home));
+
+            TextView requestLabelTxt = view.findViewById(R.id.txtRequests);
+            String[] requestComponents = requestLabelTxt.getText().toString().split(" ");
+            requestLabelTxt.setText(requestComponents[0] + " (" + requests.size() + ")");
+
             int shiftAmount = home.getComingShifts().size();
             String comingShiftLabel = shiftLabel.getText() + " (" + shiftAmount + ")";
             shiftLabel.setText(comingShiftLabel);
@@ -121,15 +131,6 @@ public class HomeFragment extends Fragment {
                     shift.setText(second.getShift());
                 }
             }
-        }
-
-        String user = home.getIntent().getStringExtra("id");
-
-        if (user != null) {
-            requestRecyclerView = view.findViewById(R.id.requestRecyclerView);
-            List<Pair<String,Shift>> requests = home.getRequestToUser(user);
-            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(home, requests));
-            requestRecyclerView.setLayoutManager(new LinearLayoutManager(home));
         }
         return view;
     }

@@ -10,12 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.schedule.databinding.ActivityHomeBinding;
 import com.example.schedule.json.Employee;
@@ -24,6 +23,7 @@ import com.example.schedule.json.Request2;
 import com.example.schedule.json.RequestAPI;
 import com.example.schedule.json.Shift2;
 import com.example.schedule.json.ShiftAPI;
+import com.google.gson.JsonObject;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -44,21 +44,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class HomeActivity extends AppCompatActivity {
     ActivityHomeBinding binding;
-    Fragment homeFragment;
-    Fragment scheduleFragment;
-    Fragment moreFragment;
+    public Fragment homeFragment;
+    public Fragment scheduleFragment;
+    RecyclerView requestRecyclerView;
+    public Fragment moreFragment;
     public String amountOfShifts;
     private final ArrayList<Shift> comingShifts = new ArrayList<>();
     private final ArrayList<Shift> allShifts = new ArrayList<>();
     private final HashMap<String, Staff> staff = new HashMap<>();
     private final ArrayList<Request> request = new ArrayList<>();
+    List<Pair<String,Shift>> requestToMe = new ArrayList<>();
     private Staff me;
     String ssn;
 
     //databas
     final int MILLISECONDS = 1000;
     public static Handler handler = new Handler();
-    public static RetrofitFetch retrofitFetch;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -70,57 +71,125 @@ public class HomeActivity extends AppCompatActivity {
         scheduleFragment = new ScheduleFragment();
         moreFragment = new MoreFragment();
 
-        replaceFragment(homeFragment);
+        //replaceFragment(homeFragment);
 
         //Hämta inloggad användare
         ssn = getIntent().getStringExtra("id");
+        //insertMe(ssn);
         if (ssn != null) {
             //insertAllShifts();
-            insertComingUserShifts(ssn);
+            //insertComingUserShifts(ssn);
             insertMe(ssn);
+            //Logga ut om användaren inte finns
             //insertStaff();
-            amountOfShifts = Integer.toString(comingShifts.size());
-            insertRequest(); //Görs denhär??
-        }else{
-            System.out.println("FAIL");
-        }
+            //amountOfShifts = Integer.toString(comingShifts.size());
+            //insertRequest(); //Görs denhär??
+
+
+            //startApp();
 
         /*
         TEST
          */
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                retrofitFetch = new RetrofitFetch();
-                retrofitFetch.shiftList = null;
-                retrofitFetch.handler = new Handler();
-                Pair<String, HomeActivity> pair = new Pair<>(ssn, HomeActivity.this);
-                retrofitFetch.execute(pair);
-                handler.postDelayed(this, MILLISECONDS);
-            }
-        }, MILLISECONDS);
+            /*
+        requestRecyclerView = findViewById(R.id.requestRecyclerView);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home:
-                    replaceFragment(homeFragment);
+                    //insertComingUserShifts(ssn);
+                    //replaceFragment(homeFragment);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            insertComingUserShifts(ssn);
+                            getRequestToUser(ssn);*/
+                            /*
+                            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requests));
+                            requestRecyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+                            *//*
+                            homeFragment = new HomeFragment();
+                            replaceFragment(homeFragment);
+                            handler.postDelayed(this, MILLISECONDS);
+
+                        }
+                    }, MILLISECONDS);
                     break;
                 case R.id.schedule:
                     replaceFragment(scheduleFragment);
+                    handler.removeCallbacksAndMessages(null);
                     break;
                 case R.id.more:
                     replaceFragment(moreFragment);
+                    handler.removeCallbacksAndMessages(null);
                     break;
             }
             return true;
         });
+        binding.bottomNavigationView.setSelectedItemId(R.id.home);*/
+
+        }else{
+            closeApp();
+        }
     }
 
-    private void replaceFragment(Fragment fragment){
+    public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void startApp(){
+        requestRecyclerView = findViewById(R.id.requestRecyclerView);
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch(item.getItemId()){
+                case R.id.home:
+                    //insertComingUserShifts(ssn);
+                    //replaceFragment(homeFragment);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            insertComingUserShifts(ssn);
+                            getRequestToUser(ssn);
+                            /*
+                            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requests));
+                            requestRecyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+                            */
+                            homeFragment = new HomeFragment();
+                            replaceFragment(homeFragment);
+                            handler.postDelayed(this, MILLISECONDS);
+
+                        }
+                    }, MILLISECONDS);
+                    break;
+                case R.id.schedule:
+                    replaceFragment(scheduleFragment);
+                    handler.removeCallbacksAndMessages(null);
+                    break;
+                case R.id.more:
+                    replaceFragment(moreFragment);
+                    handler.removeCallbacksAndMessages(null);
+                    break;
+            }
+            return true;
+        });
+        binding.bottomNavigationView.setSelectedItemId(R.id.home);
+    }
+
+    public void closeApp(){
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        sharedPreferences.edit().clear().commit();
+        Intent mainAct = new Intent(HomeActivity.this, MainActivity.class);
+        //sharedPreferences.edit().putString("user", null).commit();
+                    /*
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("user", null);
+                    editor.apply();*/
+        startActivity(mainAct);
     }
 
     public ArrayList<Shift> getComingShifts(){
@@ -149,8 +218,9 @@ public class HomeActivity extends AppCompatActivity {
                 if(!employee.isEmpty()) {
                     Employee e = employee.get(0);
                     me = new Staff(e.getSsn(), e.getFirstName() + " " + e.getLastName(), e.getEmail(), e.getPhoneNumber());
+                    startApp();
                 }else{
-                    Toast.makeText(HomeActivity.this, "Något gick väldigt, väldigt snett", Toast.LENGTH_LONG);
+                    closeApp();
                 }
             }
 
@@ -217,6 +287,8 @@ public class HomeActivity extends AppCompatActivity {
         staff.put(s1.getSocialSecurityNumber(), s1);*/
     }
 
+    public List<Pair<String, Shift>> getRequestToMe(){ return requestToMe; }
+
     private void insertComingUserShifts(String user){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date cal = new Date();
@@ -236,6 +308,7 @@ public class HomeActivity extends AppCompatActivity {
                     return;
                 }
                 List<Shift2> shifts = response.body();
+                comingShifts.clear();
 
                 for(Shift2 s : shifts){
                     String[] dateComponents = s.getDate().split("-");
@@ -249,9 +322,8 @@ public class HomeActivity extends AppCompatActivity {
                     int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
                     Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
                     comingShifts.add(s1);
+                    amountOfShifts = Integer.toString(comingShifts.size());
                 }
-                homeFragment = new HomeFragment();
-                replaceFragment(homeFragment);
             }
             @Override
             public void onFailure(Call<List<Shift2>> call, Throwable t) {
@@ -360,7 +432,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public List<Pair<String,Shift>> getRequestToUser(String user){
-        List<Pair<String,Shift>> temp = new ArrayList<>();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -382,6 +453,7 @@ public class HomeActivity extends AppCompatActivity {
                     return;
                 }
                 List<Request2> requests = response.body();
+                requestToMe.clear();
                 for(Request2 r : requests){
                     Shift2 s = r.getShift();
                     String[] dateComponents = s.getDate().split("-");
@@ -394,15 +466,16 @@ public class HomeActivity extends AppCompatActivity {
                     int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
                     int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
                     Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-                    temp.add(new Pair<String,Shift>(r.getShift().getEmployee().getFirstName() + " " + r.getShift().getEmployee().getLastName(), s1));
+                    requestToMe.add(new Pair<String,Shift>(r.getShift().getEmployee().getFirstName() + " " + r.getShift().getEmployee().getLastName(), s1));
                 }
+                /*
                 RecyclerView recyclerView = findViewById(R.id.requestRecyclerView);
-                recyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, temp));
+                recyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requestToMe));
                 recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
 
                 TextView requestLabelTxt = findViewById(R.id.txtRequests);
                 String[] requestComponents = requestLabelTxt.getText().toString().split(" ");
-                requestLabelTxt.setText(requestComponents[0] + " (" + requests.size() + ")");
+                requestLabelTxt.setText(requestComponents[0] + " (" + requests.size() + ")");*/
             }
 
             @Override
@@ -410,7 +483,7 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-        return temp;
+        return requestToMe;
     }
 
     public ArrayList<Staff> getNonWorkingStaff(String date){

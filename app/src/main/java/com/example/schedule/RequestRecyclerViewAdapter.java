@@ -96,18 +96,21 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
                     //TEMPORÄR
 
                     UpdateResponse updateResponse = new UpdateResponse();
-                    updateResponse.setId(view.getId());
                     updateResponse.setSsn(userID);
+                    updateResponse.setId(view.getId());
 
-                    Call<Shift2> call = shiftAPI.updateShift(updateResponse);
-                    call.enqueue(new Callback<Shift2>() {
+                    Call<String> call = shiftAPI.updateShift(updateResponse);
+                    call.enqueue(new Callback<String>() {
                         @Override
-                        public void onResponse(Call<Shift2> call, Response<Shift2> response) {
-
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if(!response.isSuccessful()){
+                                return;
+                            }
+                            System.out.println(response.body());
                         }
 
                         @Override
-                        public void onFailure(Call<Shift2> call, Throwable t) {
+                        public void onFailure(Call<String> call, Throwable t) {
 
                         }
                     });
