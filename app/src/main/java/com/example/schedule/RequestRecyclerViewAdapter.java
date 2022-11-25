@@ -3,14 +3,11 @@ package com.example.schedule;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -18,15 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.schedule.json.Employee;
-import com.example.schedule.json.EmployeeAPI;
-import com.example.schedule.json.Request2;
 import com.example.schedule.json.Shift2;
 import com.example.schedule.json.ShiftAPI;
 import com.example.schedule.json.UpdateResponse;
-import com.example.schedule.json.body;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -102,9 +94,6 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
                     ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
 
                     //TEMPORÄR
-                    body b = new body();
-                    b.setEmployeeId(userID);
-                    b.setShiftId(view.getId());
 
                     UpdateResponse updateResponse = new UpdateResponse();
                     updateResponse.setId(view.getId());

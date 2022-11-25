@@ -72,13 +72,11 @@ public class MoreFragment extends Fragment {
         TextView userEmail = view.findViewById(R.id.txtUserEmail);
         TextView userPhone = view.findViewById(R.id.txtUserPhone);
 
-        String userID = home.getIntent().getStringExtra("id");
+        Staff me = home.getMe();
 
-        Staff user = home.getStaffWithSSN(userID);
-
-        userName.setText(user.getName());
-        userEmail.setText(user.getEmail());
-        userPhone.setText(user.getPhoneNumber());
+        userName.setText(me.getName());
+        userEmail.setText(me.getEmail());
+        userPhone.setText(me.getPhoneNumber());
 
         return view;
     }

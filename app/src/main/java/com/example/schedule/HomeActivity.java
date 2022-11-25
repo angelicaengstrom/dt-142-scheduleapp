@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Pair;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.schedule.databinding.ActivityHomeBinding;
 import com.example.schedule.json.Employee;
@@ -50,7 +53,12 @@ public class HomeActivity extends AppCompatActivity {
     private final HashMap<String, Staff> staff = new HashMap<>();
     private final ArrayList<Request> request = new ArrayList<>();
     private Staff me;
-    String user;
+    String ssn;
+
+    //databas
+    final int MILLISECONDS = 1000;
+    public static Handler handler = new Handler();
+    public static RetrofitFetch retrofitFetch;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -65,17 +73,32 @@ public class HomeActivity extends AppCompatActivity {
         replaceFragment(homeFragment);
 
         //Hämta inloggad användare
-        user = getIntent().getStringExtra("id");
-        if (user != null) {
+        ssn = getIntent().getStringExtra("id");
+        if (ssn != null) {
             //insertAllShifts();
-            insertComingUserShifts(user);
-            insertMe();
+            insertComingUserShifts(ssn);
+            insertMe(ssn);
             //insertStaff();
             amountOfShifts = Integer.toString(comingShifts.size());
-            insertRequest();
+            insertRequest(); //Görs denhär??
         }else{
             System.out.println("FAIL");
         }
+
+        /*
+        TEST
+         */
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                retrofitFetch = new RetrofitFetch();
+                retrofitFetch.shiftList = null;
+                retrofitFetch.handler = new Handler();
+                Pair<String, HomeActivity> pair = new Pair<>(ssn, HomeActivity.this);
+                retrofitFetch.execute(pair);
+                handler.postDelayed(this, MILLISECONDS);
+            }
+        }, MILLISECONDS);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
@@ -108,11 +131,39 @@ public class HomeActivity extends AppCompatActivity {
 
     public HashMap<String, Staff> getStaff() { return staff; }
 
-    void insertMe(){
+    void insertMe(String id){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
+        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+        Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
+        call.enqueue(new Callback<List<Employee>>() {
+            @Override
+            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+                if(!response.isSuccessful()) {
+                    return;
+                }
+                List<Employee> employee = response.body();
+                if(!employee.isEmpty()) {
+                    Employee e = employee.get(0);
+                    me = new Staff(e.getSsn(), e.getFirstName() + " " + e.getLastName(), e.getEmail(), e.getPhoneNumber());
+                }else{
+                    Toast.makeText(HomeActivity.this, "Något gick väldigt, väldigt snett", Toast.LENGTH_LONG);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Employee>> call, Throwable t) {
+            }
+        });
     }
 
+    Staff getMe(){ return me; }
+
     private void insertAllShifts(){
+        /*
         Calendar c = Calendar.getInstance();
         c.set(2022, 10, 23);
         Shift s3 = new Shift(0, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
@@ -143,6 +194,7 @@ public class HomeActivity extends AppCompatActivity {
         c.set(2022, 10, 30);
         s3 = new Shift(8, c, LocalTime.of(11,0), LocalTime.of(14,0), "199905063641");
         allShifts.add(s3);
+         */
     }
 
     private void insertStaff(){
@@ -279,7 +331,7 @@ public class HomeActivity extends AppCompatActivity {
 
         RequestAPI requestAPI = retrofit.create(RequestAPI.class);
 
-        Call<List<Request2>> call = requestAPI.getRequestTo(user);
+        Call<List<Request2>> call = requestAPI.getRequestTo(ssn);
         call.enqueue(new Callback<List<Request2>>() {
             @Override
             public void onResponse(Call<List<Request2>> call, Response<List<Request2>> response) {
@@ -401,9 +453,5 @@ public class HomeActivity extends AppCompatActivity {
             }
         }*/
         return temp;
-    }
-
-    public Staff getStaffWithSSN(String ssn){
-        return staff.get(ssn);
     }
 }

@@ -6,14 +6,20 @@
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/error_log_in.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_clear_24.xml" value="0.193" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.193" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.193" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/ic_launcher_background.xml" value="0.193" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/txtclick.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/drawable/white_square.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/activity_home.xml" value="0.1956521739130435" />
-        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/card_view_shift.xml" value="0.14375" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/activity_main.xml" value="0.13333333333333333" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/card_view_shift.xml" value="0.1" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/fragment_more.xml" value="0.1956521739130435" />
         <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/fragment_schedule.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/recycler_view_request.xml" value="0.1" />
+        <entry key="..\:/Users/angel/Schedule/app/src/main/res/layout/recycler_view_shift.xml" value="0.1956521739130435" />
       </map>
     </option>
   </component>
