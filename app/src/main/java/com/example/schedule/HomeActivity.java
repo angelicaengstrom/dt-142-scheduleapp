@@ -201,8 +201,9 @@ public class HomeActivity extends AppCompatActivity {
     public HashMap<String, Staff> getStaff() { return staff; }
 
     void insertMe(String id){
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -294,8 +295,9 @@ public class HomeActivity extends AppCompatActivity {
         Date cal = new Date();
         String date = dateFormat.format(cal);
 
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -334,8 +336,9 @@ public class HomeActivity extends AppCompatActivity {
     public List<Pair<String,Shift>> getShiftsAtDate(String date){
         List<Pair<String,Shift>> temp = new ArrayList<>();
 
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -395,8 +398,9 @@ public class HomeActivity extends AppCompatActivity {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
@@ -437,8 +441,9 @@ public class HomeActivity extends AppCompatActivity {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
@@ -488,8 +493,10 @@ public class HomeActivity extends AppCompatActivity {
 
     public ArrayList<Staff> getNonWorkingStaff(String date){
         ArrayList<Staff> temp = new ArrayList<>();
+        String samuel = "10.82.231.15";
+        //String marcus = "10.82.242.112";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

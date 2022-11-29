@@ -7,12 +7,12 @@ public class Employee {
     private String phoneNumber;
     private String ssn;
 
-    public String getSsn() {
-        return ssn;
+    public String getEmail() {
+        return email;
     }
 
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -31,19 +31,19 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getSsn() {
+        return ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
     }
 }

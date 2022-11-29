@@ -92,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         user = sharedPreferences.getString(USER, null);
         //FÖR ATT ÅTERSTÄLLA
-        /*
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USER, null);
-        editor.apply();*/
+        editor.apply();
         if(user != null){
             Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
             homeAct.putExtra("id", user);
@@ -105,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void connect(String id){
+        String samuel = "10.82.231.15";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -132,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
                     textInputLayout.setErrorEnabled(true);
                 }
             }
-
             @Override
             public void onFailure(Call<List<Employee>> call, Throwable t) {
                 textInputLayout.setError(getString(R.string.server_fail));
