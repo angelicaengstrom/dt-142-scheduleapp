@@ -121,13 +121,47 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         holder.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Du vill INTE ha");
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Du vill INTE ha");*/
                 String userID = ((Activity) context).getIntent().getStringExtra("id");
                 if(userID != null){
-                    builder.setMessage("DELETE HTTP REQUEST: ShiftID: " + view.getId() + " from userID: " + userID);
+                    /*builder.setMessage("DELETE HTTP REQUEST: ShiftID: " + view.getId() + " from userID: " + userID);
                     AlertDialog ad = builder.create();
-                    ad.show();
+                    ad.show();*/
+                    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+                    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+                    OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
+
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(okHttpClient)
+                            .build();
+
+                    ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
+
+                    //TEMPORÄR
+
+                    UpdateResponse updateResponse = new UpdateResponse();
+                    updateResponse.setSsn(userID);
+                    updateResponse.setId(view.getId());
+
+                    Call<String> call = shiftAPI.deleteRequest(updateResponse);
+                    call.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if(!response.isSuccessful()){
+                                return;
+                            }
+                            System.out.println(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+
+                        }
+                    });
                 }
             }
         });

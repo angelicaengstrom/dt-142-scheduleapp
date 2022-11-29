@@ -19,10 +19,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.schedule.json.ShiftAPI;
+import com.example.schedule.json.UpdateResponse;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * En klass som ärver av RecyclerView.Adapter
  * Innefattar metoder till kalendersidans recyclerview adapter för att visa arbetspass under ett visst datum
@@ -171,8 +183,45 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
          */
         private void sendRequest(int currIndex){
             String ssn = nonWorkers.get(currIndex).getSocialSecurityNumber();
-            String success = "Förfrågan skickad från ShiftID: " + holder.shiftId + " to " + ssn;
+
+            /*String success = "Förfrågan skickad från ShiftID: " + holder.shiftId + " to " + ssn;
             Toast.makeText(context, success, Toast.LENGTH_SHORT).show();
+            */
+
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+
+            ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
+
+            //TEMPORÄR
+
+            UpdateResponse updateResponse = new UpdateResponse();
+            updateResponse.setSsn(ssn);
+            updateResponse.setId(holder.shiftId);
+
+            Call<String> call = shiftAPI.sendRequest(updateResponse);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if(!response.isSuccessful()){
+                        return;
+                    }
+                    System.out.println(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+
+                }
+            });
         }
     }
 }

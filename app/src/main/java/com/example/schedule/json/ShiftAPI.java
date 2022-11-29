@@ -26,4 +26,14 @@ public interface ShiftAPI {
     @Headers("content-type: application/json")
     @PUT("shift/change-employee")
     Call<String> updateShift(@Body UpdateResponse updateResponse);
+
+    //DELETE REQUEST
+    @Headers("content-type: application/json")
+    //@PUT("shift/change-employee")
+    Call<String> deleteRequest(@Body UpdateResponse updateResponse);
+
+    //SEND REQUEST
+    @Headers("content-type: application/json")
+    //@PUT("shift/change-employee")
+    Call<String> sendRequest(@Body UpdateResponse updateResponse);
 }
