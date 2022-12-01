@@ -3,7 +3,6 @@ Schemaapp till 'Antons skafferi'. Testas och körs med *Pixel 5 API 30*.
 ## To-do:
 - [ ] javadoc
 - [ ] Städa gammal och onödig kod
-- [ ] Ev. Annan möjlighet att logga ut än att stänga ner applikationen
 
 ## Done:
 - [x] Sätta Shift.java medlemmar som final
@@ -27,3 +26,4 @@ Schemaapp till 'Antons skafferi'. Testas och körs med *Pixel 5 API 30*.
 - [x] live uppdatering på kommande pass och förfrågningar
 - [x] Skicka information till databas
 - [x] live uppdatering på alla som jobbar en viss dag
+- [x] Ev. Annan möjlighet att logga ut än att stänga ner applikationen
