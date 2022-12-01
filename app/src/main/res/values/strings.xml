@@ -17,4 +17,5 @@
     <string name="fel_format">Personnumret är i fel format</string>
     <string name="ssn">Personnummer</string>
     <string name="logout">Logga ut</string>
+    <string name="request_sent">Passförfrågan skickad</string>
 </resources>

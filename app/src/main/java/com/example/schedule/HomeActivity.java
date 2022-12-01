@@ -232,6 +232,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 RecyclerView recyclerView = findViewById(R.id.shiftRecyclerView);
                 recyclerView.setAdapter(new ShiftRecyclerViewAdapter(HomeActivity.this, temp));
+                //Fungerar denna?
+                recyclerView.getAdapter().setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
                 recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
             }
 

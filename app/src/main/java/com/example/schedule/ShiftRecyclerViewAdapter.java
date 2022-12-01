@@ -202,6 +202,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
                     if (!response.isSuccessful()) {
                         return;
                     }
+                    Toast.makeText(context, R.string.request_sent, Toast.LENGTH_SHORT).show();
                     System.out.println(response.body());
 
                 }
