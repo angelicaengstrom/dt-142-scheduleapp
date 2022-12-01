@@ -4,19 +4,22 @@ package com.example.schedule;
  * En klass som beskriver en förfrågning från ett skift till en användare
  */
 public class Request {
-    private final String userId;
-    private final int shiftId;
+    private String ssn;
+    private int id;
 
-    Request(String uid, int sid){
-        userId = uid;
-        shiftId = sid;
+    public int getId() {
+        return id;
     }
 
-    public String getUserId() {
-        return userId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getShiftId() {
-        return shiftId;
+    public String getSsn() {
+        return ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
     }
 }

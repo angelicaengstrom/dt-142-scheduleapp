@@ -7,7 +7,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Retrofitter<T> {
-    private static final String IP = "10.82.231.15";
+    private static final String IP = "31.209.47.252";
     private final Retrofit retrofit;
 
     Retrofitter(){

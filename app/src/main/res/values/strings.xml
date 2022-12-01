@@ -16,4 +16,5 @@
     <string name="hint_ssn">YYYYMMDDXXXX</string>
     <string name="fel_format">Personnumret är i fel format</string>
     <string name="ssn">Personnummer</string>
+    <string name="logout">Logga ut</string>
 </resources>
