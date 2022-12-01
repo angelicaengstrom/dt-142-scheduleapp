@@ -1,5 +1,6 @@
 package com.example.schedule;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,18 +18,18 @@ import com.example.schedule.json.EmployeeAPI;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
     Button btnLogIn;
-    public String user;
+    public String ssn;
     TextInputLayout textInputLayout;
+    SharedPreferences sharedPreferences;
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER = "user";
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public class LogInListener implements View.OnClickListener{
         @Override
         public void onClick(View view){
-            user = textInputLayout.getEditText().getText().toString();
-            connect(user);
+            ssn = Objects.requireNonNull(textInputLayout.getEditText()).getText().toString();
+            getUser(ssn);
         }
     }
 
@@ -50,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             if (charSequence.length() > 0 && charSequence.length() != 12) {
-                textInputLayout.setError(getString(R.string.fel_format));
-                textInputLayout.setErrorEnabled(true);
+                showErrorMessage(getString(R.string.fel_format));
                 btnLogIn.setEnabled(false);
             } else {
                 textInputLayout.setErrorEnabled(false);
@@ -69,75 +69,85 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnLogIn = findViewById(R.id.buttonLogIn);
-        loadData();
+        sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        btnLogIn.setEnabled(false);
-        btnLogIn.setOnClickListener(new LogInListener());
+        if(oldUser()){
+            startHomeActivity();
+        }else {
+            btnLogIn = findViewById(R.id.buttonLogIn);
+            btnLogIn.setEnabled(false);
+            btnLogIn.setOnClickListener(new LogInListener());
 
-        textInputLayout = (TextInputLayout) findViewById(R.id.ssn_text_input_layout);
-        textInputLayout.getEditText().addTextChangedListener(new InputListener());
-    }
-
-    public void saveData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString(USER, user);
-
-        editor.apply();
-    }
-
-    public void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        user = sharedPreferences.getString(USER, null);
-        //FÖR ATT ÅTERSTÄLLA
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(USER, null);
-        editor.apply();
-        if(user != null){
-            Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
-            homeAct.putExtra("id", user);
-            startActivity(homeAct);
-            finish();
+            textInputLayout = (TextInputLayout) findViewById(R.id.ssn_text_input_layout);
+            Objects.requireNonNull(textInputLayout.getEditText()).addTextChangedListener(new InputListener());
         }
     }
 
-    void connect(String id){
-        String samuel = "10.82.231.15";
+    public void saveData(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(USER, ssn);
+        editor.apply();
+    }
+
+    public boolean oldUser(){
+        ssn = sharedPreferences.getString(USER, null);
+
+        /*
+        ÅTERSTÄLLNING
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(USER, null);
+        editor.apply();*/
+
+        return ssn != null;
+    }
+
+    public void startHomeActivity(){
+        Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
+        homeAct.putExtra("id", ssn);
+        startActivity(homeAct);
+        finish();
+    }
+
+    void getUser(String id){
+        /*String samuel = "10.82.231.15";
+        samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                .build();*/
 
-        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+        Retrofitter<EmployeeAPI> retrofitter = new Retrofitter<>();
+
+        //EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+
+        EmployeeAPI employeeAPI = retrofitter.create(EmployeeAPI.class);
         Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
+
         call.enqueue(new Callback<List<Employee>>() {
             @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+            public void onResponse(@NonNull Call<List<Employee>> call, @NonNull Response<List<Employee>> response) {
                 if(!response.isSuccessful()) {
-                    textInputLayout.setError(getString(R.string.nogot_gick_snett));
-                    textInputLayout.setErrorEnabled(true);
+                    showErrorMessage(getString(R.string.nogot_gick_snett));
                     return;
                 }
                 List<Employee> employee = response.body();
-                if(!employee.isEmpty()) {
+                if(Objects.requireNonNull(employee).size() == 1) {
                     saveData();
-                    Intent homeAct = new Intent(MainActivity.this, HomeActivity.class);
-                    homeAct.putExtra("id", user);
-                    startActivity(homeAct);
-                    finish();
+                    startHomeActivity();
                 }else{
-                    textInputLayout.setError(getString(R.string.nogot_gick_snett));
-                    textInputLayout.setErrorEnabled(true);
+                    showErrorMessage(getString(R.string.server_fail));
                 }
             }
             @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
-                textInputLayout.setError(getString(R.string.server_fail));
-                textInputLayout.setErrorEnabled(true);
+            public void onFailure(@NonNull Call<List<Employee>> call, @NonNull Throwable t) {
+                showErrorMessage(getString(R.string.server_fail));
             }
         });
+    }
+
+    void showErrorMessage(String errorMessage){
+        textInputLayout.setError(errorMessage);
+        textInputLayout.setErrorEnabled(true);
     }
 }

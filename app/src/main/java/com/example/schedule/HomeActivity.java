@@ -75,60 +75,8 @@ public class HomeActivity extends AppCompatActivity {
 
         //Hämta inloggad användare
         ssn = getIntent().getStringExtra("id");
-        //insertMe(ssn);
         if (ssn != null) {
-            //insertAllShifts();
-            //insertComingUserShifts(ssn);
             insertMe(ssn);
-            //Logga ut om användaren inte finns
-            //insertStaff();
-            //amountOfShifts = Integer.toString(comingShifts.size());
-            //insertRequest(); //Görs denhär??
-
-
-            //startApp();
-
-        /*
-        TEST
-         */
-            /*
-        requestRecyclerView = findViewById(R.id.requestRecyclerView);
-
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch(item.getItemId()){
-                case R.id.home:
-                    //insertComingUserShifts(ssn);
-                    //replaceFragment(homeFragment);
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            insertComingUserShifts(ssn);
-                            getRequestToUser(ssn);*/
-                            /*
-                            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requests));
-                            requestRecyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-                            *//*
-                            homeFragment = new HomeFragment();
-                            replaceFragment(homeFragment);
-                            handler.postDelayed(this, MILLISECONDS);
-
-                        }
-                    }, MILLISECONDS);
-                    break;
-                case R.id.schedule:
-                    replaceFragment(scheduleFragment);
-                    handler.removeCallbacksAndMessages(null);
-                    break;
-                case R.id.more:
-                    replaceFragment(moreFragment);
-                    handler.removeCallbacksAndMessages(null);
-                    break;
-            }
-            return true;
-        });
-        binding.bottomNavigationView.setSelectedItemId(R.id.home);*/
-
         }else{
             closeApp();
         }
@@ -202,6 +150,7 @@ public class HomeActivity extends AppCompatActivity {
 
     void insertMe(String id){
         String samuel = "10.82.231.15";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -233,61 +182,6 @@ public class HomeActivity extends AppCompatActivity {
 
     Staff getMe(){ return me; }
 
-    private void insertAllShifts(){
-        /*
-        Calendar c = Calendar.getInstance();
-        c.set(2022, 10, 23);
-        Shift s3 = new Shift(0, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
-        allShifts.add(s3);
-        c = Calendar.getInstance();
-        c.set(2022, 10, 25);
-        s3 = new Shift(1, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
-        allShifts.add(s3);
-        c = Calendar.getInstance();
-        c.set(2022, 10, 26);
-        s3 = new Shift(2, c, LocalTime.of(11,0), LocalTime.of(14,0), "200001011337");
-        allShifts.add(s3);
-        s3 = new Shift(3, c, LocalTime.of(16,0), LocalTime.of(23,0), "199905063641");
-        allShifts.add(s3);
-        s3 = new Shift(4, c, LocalTime.of(16,0), LocalTime.of(23,0), "200001010337");
-        allShifts.add(s3);
-        s3 = new Shift(5, c, LocalTime.of(16,0), LocalTime.of(23,0), "200101010337");
-        allShifts.add(s3);
-        c = Calendar.getInstance();
-        c.set(2022, 10, 30);
-        s3 = new Shift(6, c, LocalTime.of(11,0), LocalTime.of(14,0), "200101010337");
-        allShifts.add(s3);
-        c = Calendar.getInstance();
-        c.set(2022, 10, 26);
-        s3 = new Shift(7, c, LocalTime.of(16,0), LocalTime.of(23,0), "200201010337");
-        allShifts.add(s3);
-        c = Calendar.getInstance();
-        c.set(2022, 10, 30);
-        s3 = new Shift(8, c, LocalTime.of(11,0), LocalTime.of(14,0), "199905063641");
-        allShifts.add(s3);
-         */
-    }
-
-    private void insertStaff(){
-        /*
-        Staff s1 = new Staff("199905063641", "Angelica Engström", "Angelica.princess@hotmail.com", "0701906338");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("200001011337", "Samuel Greenberg", "Sam.gre@hotmail.com", "07013374200");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("200001010337", "Can Kupeli", "Canku@hotmail.com", "0708883322");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("200101010337", "Marcus Jakobsson", "marjo@hotmail.com", "0708223322");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("200201010337", "Eric Johansson", "errjo@hotmail.com", "0702223377");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("200301010337", "Nikki Wolgers", "nikki@hotmail.com", "0734938271");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("199901010337", "Joel Viggesjö", "jovig@hotmail.com", "0704938271");
-        staff.put(s1.getSocialSecurityNumber(), s1);
-        s1 = new Staff("199801010337", "Alexander Frid", "frid@hotmail.com", "0763928329");
-        staff.put(s1.getSocialSecurityNumber(), s1);*/
-    }
-
     public List<Pair<String, Shift>> getRequestToMe(){ return requestToMe; }
 
     private void insertComingUserShifts(String user){
@@ -296,6 +190,7 @@ public class HomeActivity extends AppCompatActivity {
         String date = dateFormat.format(cal);
 
         String samuel = "10.82.231.15";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -337,6 +232,7 @@ public class HomeActivity extends AppCompatActivity {
         List<Pair<String,Shift>> temp = new ArrayList<>();
 
         String samuel = "10.82.231.15";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -399,6 +295,7 @@ public class HomeActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
         String samuel = "10.82.231.15";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -442,6 +339,7 @@ public class HomeActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
         String samuel = "10.82.231.15";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -495,6 +393,7 @@ public class HomeActivity extends AppCompatActivity {
         ArrayList<Staff> temp = new ArrayList<>();
         String samuel = "10.82.231.15";
         //String marcus = "10.82.242.112";
+        //samuel = "89.233.229.182";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                 .addConverterFactory(GsonConverterFactory.create())

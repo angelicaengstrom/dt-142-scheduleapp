@@ -86,6 +86,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
                     OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
                     String samuel = "10.82.231.15";
+                    //samuel = "89.233.229.182";
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                             .addConverterFactory(GsonConverterFactory.create())
@@ -133,9 +134,10 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
                     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
                     OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
-
+                    String samuel = "10.82.231.15";
+                    //samuel = "89.233.229.182";
                     Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://10.82.231.15:8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
+                            .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(okHttpClient)
                             .build();

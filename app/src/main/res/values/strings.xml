@@ -13,7 +13,7 @@
     <string name="accept">Acceptera</string>
     <string name="till">Till: </string>
     <string name="sjukanmalan">Sjukanmälan</string>
-    <string name="hint_ssn">YYYYMMDD-XXXX</string>
+    <string name="hint_ssn">YYYYMMDDXXXX</string>
     <string name="fel_format">Personnumret är i fel format</string>
     <string name="ssn">Personnummer</string>
 </resources>
