@@ -3,6 +3,7 @@ Schemaapp till 'Antons skafferi'. Testas och körs med *Pixel 5 API 30*.
 ## To-do:
 - [ ] javadoc
 - [ ] Städa gammal och onödig kod
+- [ ] Ändra till konsekventa namn
 
 ## Done:
 - [x] Sätta Shift.java medlemmar som final
