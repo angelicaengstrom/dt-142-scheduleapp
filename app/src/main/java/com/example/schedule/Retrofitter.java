@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @param <T> interface klass som sköter HTTP förfrågningarna
  */
 public class Retrofitter<T> {
-    private static final String IP = "31.209.47.252";
+    private static final String IP = "10.82.231.15";
     private final Retrofit retrofit;
 
     Retrofitter(){

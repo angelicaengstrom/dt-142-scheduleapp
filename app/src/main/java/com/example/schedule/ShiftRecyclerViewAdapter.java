@@ -85,7 +85,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
         if(shifts.get(position).second.getUserId().contains(userID) && shifts.get(position).second.hasNotPassed()){
             holder.swap.setVisibility(View.VISIBLE);
             holder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.dark_orange));
-            holder.linearLayout.setOnClickListener(new tradeShiftListener(holder));
+            holder.linearLayout.setOnClickListener(new tradeShiftListener(holder, shifts.get(position).second.isLate()));
         }else{
             holder.linearLayout.setBackgroundColor(shifts.get(position).second.isLate() ? context.getResources().getColor(R.color.lateShift) : context.getResources().getColor(R.color.earlyShift));
         }
@@ -133,12 +133,12 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
          * Konstruktor som tilldelar holder och nonWorkers
          * @param holder den specifika ViewHoldern
          */
-        tradeShiftListener(ShiftViewHolder holder){
+        tradeShiftListener(ShiftViewHolder holder, boolean isLate){
             this.holder = holder;
             int year = shifts.get(0).second.getDate(Calendar.YEAR);
             int month = shifts.get(0).second.getDate(Calendar.MONTH) + 1;
             int day = shifts.get(0).second.getDate(Calendar.DAY_OF_MONTH);
-            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(year + "-" + month + "-" + day);
+            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(year + "-" + month + "-" + day, isLate);
         }
 
         /** Överskriver interfacets onClick metod som innefattar ett popup fönster ifall tryckt
@@ -202,9 +202,6 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
                     if (!response.isSuccessful()) {
                         return;
                     }
-                    Toast.makeText(context, R.string.request_sent, Toast.LENGTH_SHORT).show();
-                    System.out.println(response.body());
-
                 }
 
                 @Override

@@ -88,6 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void startApp(){
         requestRecyclerView = findViewById(R.id.requestRecyclerView);
 
@@ -167,6 +168,7 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date cal = new Date();
         String date = dateFormat.format(cal);
+        //ArrayList<Shift> tmp = new ArrayList<>();
 
         ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
 
@@ -190,8 +192,9 @@ public class HomeActivity extends AppCompatActivity {
                     c.set(year, month, day);
                     int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
                     int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
-                    Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-                    comingShifts.add(s1);
+                    Shift shift = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
+                    //tmp.add(shift);
+                    comingShifts.add(shift);
                     amountOfShifts = Integer.toString(comingShifts.size());
                 }
             }
@@ -199,6 +202,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onFailure(Call<List<Shift2>> call, Throwable t) {
             }
         });
+
+
     }
 
     public List<Pair<String,Shift>> getShiftsAtDate(String date){
@@ -233,7 +238,6 @@ public class HomeActivity extends AppCompatActivity {
                 RecyclerView recyclerView = findViewById(R.id.shiftRecyclerView);
                 recyclerView.setAdapter(new ShiftRecyclerViewAdapter(HomeActivity.this, temp));
                 //Fungerar denna?
-                recyclerView.getAdapter().setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
                 recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
             }
 
@@ -281,11 +285,13 @@ public class HomeActivity extends AppCompatActivity {
         return requestToMe;
     }
 
-    public ArrayList<Staff> getNonWorkingStaff(String date){
+    public ArrayList<Staff> getNonWorkingStaff(String date, boolean isLate){
         ArrayList<Staff> temp = new ArrayList<>();
 
         EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
-        Call<List<Employee>> call = employeeAPI.getFreeEmployeeAt(date);
+
+        Call<List<Employee>> call = isLate ? employeeAPI.getFreeDinnerEmployeeAt(date) : employeeAPI.getFreeLunchEmployeeAt(date);
+
         call.enqueue(new Callback<List<Employee>>() {
             @Override
             public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {

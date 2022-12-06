@@ -88,13 +88,14 @@ public class HomeFragment extends Fragment {
         //TextView 'KOMMANDE PASS'
         TextView shiftLabel = view.findViewById(R.id.txtComingShift);
         if(home != null) {
-            List<Pair<String,Shift>> requests = home.getRequestToMe();
-            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(home, requests));
+            //List<Pair<String,Shift>> requests = home.getRequestToMe();
+            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(home, home.requestToMe));
+            requestRecyclerView.getAdapter().setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             requestRecyclerView.setLayoutManager(new LinearLayoutManager(home));
 
             TextView requestLabelTxt = view.findViewById(R.id.txtRequests);
             String[] requestComponents = requestLabelTxt.getText().toString().split(" ");
-            requestLabelTxt.setText(requestComponents[0] + " (" + requests.size() + ")");
+            requestLabelTxt.setText(requestComponents[0] + " (" + home.requestToMe.size() + ")");
 
             int shiftAmount = home.getComingShifts().size();
             String comingShiftLabel = shiftLabel.getText() + " (" + shiftAmount + ")";
