@@ -1,5 +1,9 @@
 package com.example.schedule;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -9,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -78,6 +83,21 @@ public class MoreFragment extends Fragment {
         userEmail.setText(me.getEmail());
         userPhone.setText(me.getPhoneNumber());
 
+        Button logoutBtn = view.findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(new LogOutListener());
+
         return view;
+    }
+
+    public class LogOutListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            SharedPreferences sharedPreferences = home.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+            sharedPreferences.edit().clear().commit();
+            Intent mainAct = new Intent(home, MainActivity.class);
+            startActivity(mainAct);
+            home.finish();
+        }
     }
 }

@@ -52,11 +52,12 @@ public class HomeActivity extends AppCompatActivity {
     private final ArrayList<Shift> comingShifts = new ArrayList<>();
     private final ArrayList<Shift> allShifts = new ArrayList<>();
     private final HashMap<String, Staff> staff = new HashMap<>();
-    private final ArrayList<Request> request = new ArrayList<>();
     List<Pair<String,Shift>> requestToMe = new ArrayList<>();
     private Staff me;
     String ssn;
-
+    Retrofitter<ShiftAPI> shiftAPIRetrofitter = new Retrofitter<>();
+    Retrofitter<EmployeeAPI> employeeAPIRetrofitter = new Retrofitter<>();
+    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
     //databas
     final int MILLISECONDS = 1000;
     public static Handler handler = new Handler();
@@ -70,8 +71,6 @@ public class HomeActivity extends AppCompatActivity {
         homeFragment = new HomeFragment();
         scheduleFragment = new ScheduleFragment();
         moreFragment = new MoreFragment();
-
-        //replaceFragment(homeFragment);
 
         //Hämta inloggad användare
         ssn = getIntent().getStringExtra("id");
@@ -89,28 +88,21 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void startApp(){
         requestRecyclerView = findViewById(R.id.requestRecyclerView);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home:
-                    //insertComingUserShifts(ssn);
-                    //replaceFragment(homeFragment);
-
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             insertComingUserShifts(ssn);
                             getRequestToUser(ssn);
-                            /*
-                            requestRecyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requests));
-                            requestRecyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-                            */
                             homeFragment = new HomeFragment();
                             replaceFragment(homeFragment);
                             handler.postDelayed(this, MILLISECONDS);
-
                         }
                     }, MILLISECONDS);
                     break;
@@ -132,11 +124,6 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
         sharedPreferences.edit().clear().commit();
         Intent mainAct = new Intent(HomeActivity.this, MainActivity.class);
-        //sharedPreferences.edit().putString("user", null).commit();
-                    /*
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("user", null);
-                    editor.apply();*/
         startActivity(mainAct);
     }
 
@@ -149,14 +136,7 @@ public class HomeActivity extends AppCompatActivity {
     public HashMap<String, Staff> getStaff() { return staff; }
 
     void insertMe(String id){
-        String samuel = "10.82.231.15";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
         Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
         call.enqueue(new Callback<List<Employee>>() {
             @Override
@@ -188,15 +168,10 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date cal = new Date();
         String date = dateFormat.format(cal);
+        //ArrayList<Shift> tmp = new ArrayList<>();
 
-        String samuel = "10.82.231.15";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
 
-        ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
         Call<List<Shift2>> call = shiftAPI.comingUserShift(user, date);
         call.enqueue(new Callback<List<Shift2>>() {
             @Override
@@ -217,8 +192,9 @@ public class HomeActivity extends AppCompatActivity {
                     c.set(year, month, day);
                     int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
                     int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
-                    Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-                    comingShifts.add(s1);
+                    Shift shift = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
+                    //tmp.add(shift);
+                    comingShifts.add(shift);
                     amountOfShifts = Integer.toString(comingShifts.size());
                 }
             }
@@ -226,21 +202,16 @@ public class HomeActivity extends AppCompatActivity {
             public void onFailure(Call<List<Shift2>> call, Throwable t) {
             }
         });
+
+
     }
 
     public List<Pair<String,Shift>> getShiftsAtDate(String date){
         List<Pair<String,Shift>> temp = new ArrayList<>();
 
-        String samuel = "10.82.231.15";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
 
-        ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
         Call<List<Shift2>> call = shiftAPI.allShiftAtDate(date);
-
         call.enqueue(new Callback<List<Shift2>>() {
             @Override
             public void onResponse(Call<List<Shift2>> call, Response<List<Shift2>> response) {
@@ -266,10 +237,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 RecyclerView recyclerView = findViewById(R.id.shiftRecyclerView);
                 recyclerView.setAdapter(new ShiftRecyclerViewAdapter(HomeActivity.this, temp));
+                //Fungerar denna?
                 recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-                /*
-                scheduleFragment = new ScheduleFragment();
-                replaceFragment(scheduleFragment);*/
             }
 
             @Override
@@ -277,76 +246,11 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-
-        /*
-        for(Shift s : allShifts){
-            if(s.getDateString().contains(date)){
-                String name = staff.get(s.getUserId()).getName();
-                temp.add(new Pair<>(name, s));
-            }
-        }*/
         return temp;
     }
 
-    private void insertRequest(){
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
-
-        String samuel = "10.82.231.15";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        RequestAPI requestAPI = retrofit.create(RequestAPI.class);
-
-        Call<List<Request2>> call = requestAPI.getRequestTo(ssn);
-        call.enqueue(new Callback<List<Request2>>() {
-            @Override
-            public void onResponse(Call<List<Request2>> call, Response<List<Request2>> response) {
-                if(!response.isSuccessful()){
-                    return;
-                }
-                List<Request2> requests = response.body();
-                for(Request2 r : requests){
-                    request.add(new Request(r.getToEmployee().getSsn(), r.getShift().getId()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Request2>> call, Throwable t) {
-
-            }
-        });
-        /*
-        Request r1 = new Request("199905063641",4);
-        request.add(r1);
-        Request r2 = new Request("200201010337", 3);
-        request.add(r2);*/
-        /*
-        Request r3 = new Request("199905063641", 5);
-        request.add(r3);*/
-    }
-
     public List<Pair<String,Shift>> getRequestToUser(String user){
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
-
-        String samuel = "10.82.231.15";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        RequestAPI requestAPI = retrofit.create(RequestAPI.class);
+        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
 
         Call<List<Request2>> call = requestAPI.getRequestTo(user);
         call.enqueue(new Callback<List<Request2>>() {
@@ -371,14 +275,6 @@ public class HomeActivity extends AppCompatActivity {
                     Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
                     requestToMe.add(new Pair<String,Shift>(r.getShift().getEmployee().getFirstName() + " " + r.getShift().getEmployee().getLastName(), s1));
                 }
-                /*
-                RecyclerView recyclerView = findViewById(R.id.requestRecyclerView);
-                recyclerView.setAdapter(new RequestRecyclerViewAdapter(HomeActivity.this, requestToMe));
-                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-
-                TextView requestLabelTxt = findViewById(R.id.txtRequests);
-                String[] requestComponents = requestLabelTxt.getText().toString().split(" ");
-                requestLabelTxt.setText(requestComponents[0] + " (" + requests.size() + ")");*/
             }
 
             @Override
@@ -389,18 +285,13 @@ public class HomeActivity extends AppCompatActivity {
         return requestToMe;
     }
 
-    public ArrayList<Staff> getNonWorkingStaff(String date){
+    public ArrayList<Staff> getNonWorkingStaff(String date, boolean isLate){
         ArrayList<Staff> temp = new ArrayList<>();
-        String samuel = "10.82.231.15";
-        //String marcus = "10.82.242.112";
-        //samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
-        Call<List<Employee>> call = employeeAPI.getFreeEmployeeAt(date);
+        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
+
+        Call<List<Employee>> call = isLate ? employeeAPI.getFreeDinnerEmployeeAt(date) : employeeAPI.getFreeLunchEmployeeAt(date);
+
         call.enqueue(new Callback<List<Employee>>() {
             @Override
             public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
@@ -420,17 +311,6 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-
-        /*
-
-        for(Pair<String, Shift> p : shifts){
-            for(Staff s : temp){
-                if(p.first.contains(s.getName())){
-                    temp.remove(s);
-                    break;
-                }
-            }
-        }*/
         return temp;
     }
 }

@@ -13,6 +13,9 @@ public interface EmployeeAPI {
     @GET("employee")
     Call<List<Employee>> getAllEmployees();
 
-    @GET("employee/available")
-    Call<List<Employee>> getFreeEmployeeAt(@Query("date") String date);
+    @GET("employee/lunch/available")
+    Call<List<Employee>> getFreeLunchEmployeeAt(@Query("date") String date);
+
+    @GET("employee/dinner/available")
+    Call<List<Employee>> getFreeDinnerEmployeeAt(@Query("date") String date);
 }

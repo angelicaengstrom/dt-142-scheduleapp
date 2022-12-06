@@ -23,18 +23,4 @@ public interface ShiftAPI {
 
     @GET("shift")
     Call<List<Shift2>> allShift();
-
-    @Headers("content-type: application/json")
-    @PUT("shift/change-employee")
-    Call<String> updateShift(@Body UpdateResponse updateResponse);
-
-    //DELETE REQUEST
-    @Headers("content-type: application/json")
-    @PUT("request")
-    Call<String> deleteRequest(@Body UpdateResponse updateResponse);
-
-    //SEND REQUEST
-    @Headers("content-type: application/json")
-    @POST("request")
-    Call<String> sendRequest(@Body UpdateResponse updateResponse);
 }

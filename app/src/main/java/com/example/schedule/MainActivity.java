@@ -34,11 +34,29 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER = "user";
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        if(isVerified()){
+            startHomeActivity();
+        }else {
+            btnLogIn = findViewById(R.id.buttonLogIn);
+            btnLogIn.setEnabled(false);
+            btnLogIn.setOnClickListener(new LogInListener());
+
+            textInputLayout = (TextInputLayout) findViewById(R.id.ssn_text_input_layout);
+            Objects.requireNonNull(textInputLayout.getEditText()).addTextChangedListener(new InputListener());
+        }
+    }
+
     public class LogInListener implements View.OnClickListener{
         @Override
         public void onClick(View view){
             ssn = Objects.requireNonNull(textInputLayout.getEditText()).getText().toString();
-            getUser(ssn);
+            fetchEmployee(ssn);
         }
     }
 
@@ -65,24 +83,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
-        if(oldUser()){
-            startHomeActivity();
-        }else {
-            btnLogIn = findViewById(R.id.buttonLogIn);
-            btnLogIn.setEnabled(false);
-            btnLogIn.setOnClickListener(new LogInListener());
-
-            textInputLayout = (TextInputLayout) findViewById(R.id.ssn_text_input_layout);
-            Objects.requireNonNull(textInputLayout.getEditText()).addTextChangedListener(new InputListener());
-        }
-    }
-
     public void saveData(){
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -90,15 +90,8 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public boolean oldUser(){
+    public boolean isVerified(){
         ssn = sharedPreferences.getString(USER, null);
-
-        /*
-        ÅTERSTÄLLNING
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(USER, null);
-        editor.apply();*/
-
         return ssn != null;
     }
 
@@ -109,17 +102,8 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    void getUser(String id){
-        /*String samuel = "10.82.231.15";
-        samuel = "89.233.229.182";
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();*/
-
+    void fetchEmployee(String id){
         Retrofitter<EmployeeAPI> retrofitter = new Retrofitter<>();
-
-        //EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
 
         EmployeeAPI employeeAPI = retrofitter.create(EmployeeAPI.class);
         Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
@@ -136,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     saveData();
                     startHomeActivity();
                 }else{
-                    showErrorMessage(getString(R.string.server_fail));
+                    showErrorMessage(getString(R.string.nogot_gick_snett));
                 }
             }
             @Override

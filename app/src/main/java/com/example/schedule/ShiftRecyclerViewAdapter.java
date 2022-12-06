@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.schedule.json.Request2;
+import com.example.schedule.json.RequestAPI;
 import com.example.schedule.json.ShiftAPI;
 import com.example.schedule.json.UpdateResponse;
 
@@ -46,6 +47,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
     /**En lista av skift samt namn på arbetaren
      * */
     List<Pair<String,Shift>> shifts;
+    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
 
     /** Konstruktor som tilldelar skift och context
      */
@@ -83,7 +85,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
         if(shifts.get(position).second.getUserId().contains(userID) && shifts.get(position).second.hasNotPassed()){
             holder.swap.setVisibility(View.VISIBLE);
             holder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.dark_orange));
-            holder.linearLayout.setOnClickListener(new tradeShiftListener(holder));
+            holder.linearLayout.setOnClickListener(new tradeShiftListener(holder, shifts.get(position).second.isLate()));
         }else{
             holder.linearLayout.setBackgroundColor(shifts.get(position).second.isLate() ? context.getResources().getColor(R.color.lateShift) : context.getResources().getColor(R.color.earlyShift));
         }
@@ -131,12 +133,12 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
          * Konstruktor som tilldelar holder och nonWorkers
          * @param holder den specifika ViewHoldern
          */
-        tradeShiftListener(ShiftViewHolder holder){
+        tradeShiftListener(ShiftViewHolder holder, boolean isLate){
             this.holder = holder;
             int year = shifts.get(0).second.getDate(Calendar.YEAR);
             int month = shifts.get(0).second.getDate(Calendar.MONTH) + 1;
             int day = shifts.get(0).second.getDate(Calendar.DAY_OF_MONTH);
-            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(year + "-" + month + "-" + day);
+            nonWorkers = ((HomeActivity) context).getNonWorkingStaff(year + "-" + month + "-" + day, isLate);
         }
 
         /** Överskriver interfacets onClick metod som innefattar ett popup fönster ifall tryckt
@@ -185,24 +187,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
         private void sendRequest(int currIndex) {
             String ssn = nonWorkers.get(currIndex).getSocialSecurityNumber();
 
-            /*String success = "Förfrågan skickad från ShiftID: " + holder.shiftId + " to " + ssn;
-            Toast.makeText(context, success, Toast.LENGTH_SHORT).show();
-            */
-
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-            OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
-
-            String samuel = "10.82.231.15";
-            //samuel = "89.233.229.182";
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://" + samuel + ":8080/antons-skafferi-db-1.0-SNAPSHOT/api/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(okHttpClient)
-                    .build();
-
-            ShiftAPI shiftAPI = retrofit.create(ShiftAPI.class);
+            RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
 
             //TEMPORÄR
 
@@ -210,17 +195,13 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
             updateResponse.setSsn(ssn);
             updateResponse.setId(holder.shiftId);
 
-
-
-            Call<String> call = shiftAPI.sendRequest(updateResponse);
+            Call<String> call = requestAPI.sendRequest(updateResponse);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (!response.isSuccessful()) {
                         return;
                     }
-                    System.out.println(response.body());
-
                 }
 
                 @Override
