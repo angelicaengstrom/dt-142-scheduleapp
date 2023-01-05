@@ -2,12 +2,17 @@ package com.example.schedule;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Home IP: 89.233.229.182
+ * School IP: 10.82.231.15
+ * Can Kupeli IP: 31.209.47.252
+ * @param <T> interface klass som sköter HTTP förfrågningarna
+ */
 public class Retrofitter<T> {
-    private static final String IP = "10.82.231.15";
+    private static final String IP = "89.233.229.182";
     private final Retrofit retrofit;
 
     Retrofitter(){
@@ -20,10 +25,6 @@ public class Retrofitter<T> {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
-    }
-
-    public Retrofit getRetrofit() {
-        return retrofit;
     }
 
     public T create(Class<T> interfaceClass){
