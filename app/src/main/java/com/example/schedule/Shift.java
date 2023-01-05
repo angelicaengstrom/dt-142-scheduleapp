@@ -87,6 +87,6 @@ public class Shift {
      * @return true eller false
      */
     public boolean isLate(){
-        return !stopTime.isBefore(LocalTime.of(16, 0));
+        return !startTime.isBefore(LocalTime.of(15, 0));
     }
 }
