@@ -47,7 +47,8 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
     /**En lista av skift samt namn på arbetaren
      * */
     List<Pair<String,Shift>> shifts;
-    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
+    HTTPRequests httpRequests = HTTPRequests.getInstance();
+    //Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
 
     /** Konstruktor som tilldelar skift och context
      */
@@ -186,29 +187,7 @@ public class ShiftRecyclerViewAdapter extends RecyclerView.Adapter<ShiftRecycler
          */
         private void sendRequest(int currIndex) {
             String ssn = nonWorkers.get(currIndex).getSocialSecurityNumber();
-
-            RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
-            //TEMPORÄR
-
-            UpdateResponse updateResponse = new UpdateResponse();
-            updateResponse.setSsn(ssn);
-            updateResponse.setId(holder.shiftId);
-
-            Call<String> call = requestAPI.sendRequest(updateResponse);
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (!response.isSuccessful()) {
-                        return;
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-
-                }
-            });
+            httpRequests.sendRequest(holder, ssn);
         }
     }
 }

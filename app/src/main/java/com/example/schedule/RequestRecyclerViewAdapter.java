@@ -41,7 +41,8 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
     /**En lista av skift samt namn på arbetaren som skickat förfrågan
      * */
     List<Pair<String,Shift>> shifts;
-    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
+    HTTPRequests httpRequests = HTTPRequests.getInstance();
+    //Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
 
     /** Konstruktor som tilldelar skift och context
      */
@@ -104,28 +105,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         public void onClick(View view){
             String userID = ((Activity) context).getIntent().getStringExtra("id");
             if(userID != null){
-                RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
-                UpdateResponse updateResponse = new UpdateResponse();
-                updateResponse.setSsn(userID);
-                updateResponse.setId(view.getId());
-
-                Call<String> call = requestAPI.acceptRequest(updateResponse);
-
-                call.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(!response.isSuccessful()){
-                            return;
-                        }
-                        System.out.println(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-
-                    }
-                });
+                httpRequests.acceptRequest(userID, view);
             }
         }
     }
@@ -136,29 +116,7 @@ public class RequestRecyclerViewAdapter extends RecyclerView.Adapter<RequestRecy
         public void onClick(View view) {
             String userID = ((Activity) context).getIntent().getStringExtra("id");
             if(userID != null){
-                RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
-                //TEMPORÄR
-                UpdateResponse updateResponse = new UpdateResponse();
-                updateResponse.setSsn(userID);
-                updateResponse.setId(view.getId());
-
-                Call<String> call = requestAPI.deleteRequest(updateResponse);
-
-                call.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(!response.isSuccessful()){
-                            return;
-                        }
-                        System.out.println(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-
-                    }
-                });
+                httpRequests.deleteRequest(userID, view);
             }
         }
     }

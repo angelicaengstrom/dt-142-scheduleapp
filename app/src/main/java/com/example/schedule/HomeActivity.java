@@ -48,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     public Fragment scheduleFragment;
     RecyclerView requestRecyclerView;
     public Fragment moreFragment;
+    HTTPRequests httpRequests = HTTPRequests.getInstance();
     public String amountOfShifts;
     private final ArrayList<Shift> comingShifts = new ArrayList<>();
     private final ArrayList<Shift> allShifts = new ArrayList<>();
@@ -55,9 +56,10 @@ public class HomeActivity extends AppCompatActivity {
     List<Pair<String,Shift>> requestToMe = new ArrayList<>();
     private Staff me;
     String ssn;
+    /*
     Retrofitter<ShiftAPI> shiftAPIRetrofitter = new Retrofitter<>();
     Retrofitter<EmployeeAPI> employeeAPIRetrofitter = new Retrofitter<>();
-    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();
+    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();*/
     //databas
     final int MILLISECONDS = 1000;
     public static Handler handler = new Handler();
@@ -80,6 +82,8 @@ public class HomeActivity extends AppCompatActivity {
             closeApp();
         }
     }
+
+    public void setMe(Staff staff){ this.me = staff; }
 
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -136,28 +140,7 @@ public class HomeActivity extends AppCompatActivity {
     public HashMap<String, Staff> getStaff() { return staff; }
 
     void insertMe(String id){
-        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
-        Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
-        call.enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
-                if(!response.isSuccessful()) {
-                    return;
-                }
-                List<Employee> employee = response.body();
-                if(!employee.isEmpty()) {
-                    Employee e = employee.get(0);
-                    me = new Staff(e.getSsn(), e.getFirstName() + " " + e.getLastName(), e.getEmail(), e.getPhoneNumber());
-                    startApp();
-                }else{
-                    closeApp();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
-            }
-        });
+        httpRequests.insertMe(id, HomeActivity.this);
     }
 
     Staff getMe(){ return me; }
@@ -168,149 +151,18 @@ public class HomeActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date cal = new Date();
         String date = dateFormat.format(cal);
-        //ArrayList<Shift> tmp = new ArrayList<>();
-
-        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
-
-        Call<List<Shift2>> call = shiftAPI.comingUserShift(user, date);
-        call.enqueue(new Callback<List<Shift2>>() {
-            @Override
-            public void onResponse(Call<List<Shift2>> call, Response<List<Shift2>> response) {
-                if(!response.isSuccessful()) {
-                    return;
-                }
-                List<Shift2> shifts = response.body();
-                comingShifts.clear();
-
-                for(Shift2 s : shifts){
-                    String[] dateComponents = s.getDate().split("-");
-
-                    Calendar c = Calendar.getInstance();
-                    int year = Integer.parseInt(dateComponents[0]);
-                    int month = Integer.parseInt(dateComponents[1]) - 1;
-                    int day = Integer.parseInt(dateComponents[2]);
-                    c.set(year, month, day);
-                    int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
-                    int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
-                    Shift shift = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-                    //tmp.add(shift);
-                    comingShifts.add(shift);
-                    amountOfShifts = Integer.toString(comingShifts.size());
-                }
-            }
-            @Override
-            public void onFailure(Call<List<Shift2>> call, Throwable t) {
-            }
-        });
-
-
+        httpRequests.insertComingUserShifts(user, HomeActivity.this, date);
     }
 
     public List<Pair<String,Shift>> getShiftsAtDate(String date){
-        List<Pair<String,Shift>> temp = new ArrayList<>();
-
-        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
-
-        Call<List<Shift2>> call = shiftAPI.allShiftAtDate(date);
-        call.enqueue(new Callback<List<Shift2>>() {
-            @Override
-            public void onResponse(Call<List<Shift2>> call, Response<List<Shift2>> response) {
-                if(!response.isSuccessful()){
-                    return;
-                }
-                List<Shift2> shifts = response.body();
-
-                for(Shift2 s : shifts) {
-                    String[] dateComponents = s.getDate().split("-");
-
-                    Calendar c = Calendar.getInstance();
-                    int year = Integer.parseInt(dateComponents[0]);
-                    int month = Integer.parseInt(dateComponents[1]) - 1;
-                    int day = Integer.parseInt(dateComponents[2]);
-                    c.set(year, month, day);
-                    int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
-                    int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
-                    Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-
-                    temp.add(new Pair<>(s.getEmployee().getFirstName() + " " + s.getEmployee().getLastName(), s1));
-
-                }
-                RecyclerView recyclerView = findViewById(R.id.shiftRecyclerView);
-                recyclerView.setAdapter(new ShiftRecyclerViewAdapter(HomeActivity.this, temp));
-                //Fungerar denna?
-                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-            }
-
-            @Override
-            public void onFailure(Call<List<Shift2>> call, Throwable t) {
-
-            }
-        });
-        return temp;
+        return httpRequests.getShiftsAtDate(date, HomeActivity.this);
     }
 
     public List<Pair<String,Shift>> getRequestToUser(String user){
-        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
-        Call<List<Request2>> call = requestAPI.getRequestTo(user);
-        call.enqueue(new Callback<List<Request2>>() {
-            @Override
-            public void onResponse(Call<List<Request2>> call, Response<List<Request2>> response) {
-                if(!response.isSuccessful()){
-                    return;
-                }
-                List<Request2> requests = response.body();
-                requestToMe.clear();
-                for(Request2 r : requests){
-                    Shift2 s = r.getShift();
-                    String[] dateComponents = s.getDate().split("-");
-
-                    Calendar c = Calendar.getInstance();
-                    int year = Integer.parseInt(dateComponents[0]);
-                    int month = Integer.parseInt(dateComponents[1]) - 1;
-                    int day = Integer.parseInt(dateComponents[2]);
-                    c.set(year, month, day);
-                    int startHour = Integer.parseInt(s.getBeginTime().substring(0,2));
-                    int stopHour = Integer.parseInt(s.getEndTime().substring(0,2));
-                    Shift s1 = new Shift(s.getId(), c, LocalTime.of(startHour,0), LocalTime.of(stopHour,0), s.getEmployee().getSsn());
-                    requestToMe.add(new Pair<String,Shift>(r.getShift().getEmployee().getFirstName() + " " + r.getShift().getEmployee().getLastName(), s1));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Request2>> call, Throwable t) {
-
-            }
-        });
-        return requestToMe;
+        return httpRequests.getRequestToUser(user, HomeActivity.this);
     }
 
     public ArrayList<Staff> getNonWorkingStaff(String date, boolean isLate){
-        ArrayList<Staff> temp = new ArrayList<>();
-
-        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
-
-        Call<List<Employee>> call = isLate ? employeeAPI.getFreeDinnerEmployeeAt(date) : employeeAPI.getFreeLunchEmployeeAt(date);
-
-        call.enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
-                if(!response.isSuccessful()) {
-                    return;
-                }
-                List<Employee> employees = response.body();
-
-                for(Employee e : employees) {
-                    Staff s = new Staff(e.getSsn(),e.getFirstName() + " " + e.getLastName(), e.getEmail(), e.getPhoneNumber());
-                    temp.add(s);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
-
-            }
-        });
-        return temp;
+        return httpRequests.getNonWorkingStaff(date, isLate);
     }
 }

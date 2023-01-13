@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public String ssn;
     TextInputLayout textInputLayout;
     SharedPreferences sharedPreferences;
+    HTTPRequests httpRequests = HTTPRequests.getInstance();
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER = "user";
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void fetchEmployee(String id){
+        httpRequests.fetchEmployee(id, MainActivity.this);
+        /*
         Retrofitter<EmployeeAPI> retrofitter = new Retrofitter<>();
 
         EmployeeAPI employeeAPI = retrofitter.create(EmployeeAPI.class);
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<List<Employee>> call, @NonNull Throwable t) {
                 showErrorMessage(getString(R.string.server_fail));
             }
-        });
+        });*/
     }
 
     void showErrorMessage(String errorMessage){
