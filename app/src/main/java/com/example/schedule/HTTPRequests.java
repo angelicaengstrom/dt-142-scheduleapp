@@ -1,6 +1,5 @@
 package com.example.schedule;
 
-import android.content.Context;
 import android.os.Build;
 import android.util.Pair;
 import android.view.View;
@@ -18,12 +17,9 @@ import com.example.schedule.json.Shift2;
 import com.example.schedule.json.ShiftAPI;
 import com.example.schedule.json.UpdateResponse;
 
-import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,15 +29,15 @@ import retrofit2.Response;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class HTTPRequests {
-    Retrofitter<ShiftAPI> shiftAPIRetrofitter;
-    Retrofitter<EmployeeAPI> employeeAPIRetrofitter;
-    Retrofitter<RequestAPI> requestAPIRetrofitter;
+    ShiftAPI shiftAPI;
+    EmployeeAPI employeeAPI;
+    RequestAPI requestAPI;
     private static volatile HTTPRequests instance;
 
     private HTTPRequests(){
-        shiftAPIRetrofitter = new Retrofitter<>();
-        employeeAPIRetrofitter = new Retrofitter<>();
-        requestAPIRetrofitter = new Retrofitter<>();
+        shiftAPI = new Retrofitter<ShiftAPI>().create(ShiftAPI.class);
+        employeeAPI = new Retrofitter<EmployeeAPI>().create(EmployeeAPI.class);
+        requestAPI = new Retrofitter<RequestAPI>().create(RequestAPI.class);
     }
 
     public static HTTPRequests getInstance() {
@@ -58,11 +54,10 @@ public class HTTPRequests {
     }
 
     void insertMe(String id, HomeActivity context){
-        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
         Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
         call.enqueue(new Callback<List<Employee>>() {
             @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+            public void onResponse(@NonNull Call<List<Employee>> call, @NonNull Response<List<Employee>> response) {
                 if(!response.isSuccessful()) {
                     return;
                 }
@@ -77,14 +72,12 @@ public class HTTPRequests {
             }
 
             @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Employee>> call, @NonNull Throwable t) {
             }
         });
     }
 
     public void insertComingUserShifts(String user, HomeActivity context, String date){
-        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
-
         Call<List<Shift2>> call = shiftAPI.comingUserShift(user, date);
         call.enqueue(new Callback<List<Shift2>>() {
             @Override
@@ -119,8 +112,6 @@ public class HTTPRequests {
 
     public List<Pair<String,Shift>> getShiftsAtDate(String date, HomeActivity context) {
         List<Pair<String, Shift>> temp = new ArrayList<>();
-
-        ShiftAPI shiftAPI = shiftAPIRetrofitter.create(ShiftAPI.class);
 
         Call<List<Shift2>> call = shiftAPI.allShiftAtDate(date);
         call.enqueue(new Callback<List<Shift2>>() {
@@ -160,8 +151,6 @@ public class HTTPRequests {
     }
 
     public List<Pair<String,Shift>> getRequestToUser(String user, HomeActivity context){
-        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
         Call<List<Request2>> call = requestAPI.getRequestTo(user);
         call.enqueue(new Callback<List<Request2>>() {
             @Override
@@ -198,8 +187,6 @@ public class HTTPRequests {
     public ArrayList<Staff> getNonWorkingStaff(String date, boolean isLate){
         ArrayList<Staff> temp = new ArrayList<>();
 
-        EmployeeAPI employeeAPI = employeeAPIRetrofitter.create(EmployeeAPI.class);
-
         Call<List<Employee>> call = isLate ? employeeAPI.getFreeDinnerEmployeeAt(date) : employeeAPI.getFreeLunchEmployeeAt(date);
 
         call.enqueue(new Callback<List<Employee>>() {
@@ -225,9 +212,6 @@ public class HTTPRequests {
     }
 
     void fetchEmployee(String id, MainActivity context){
-        Retrofitter<EmployeeAPI> retrofitter = new Retrofitter<>();
-
-        EmployeeAPI employeeAPI = retrofitter.create(EmployeeAPI.class);
         Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
 
         call.enqueue(new Callback<List<Employee>>() {
@@ -253,8 +237,6 @@ public class HTTPRequests {
     }
 
     void acceptRequest(String userID, View view){
-        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
         UpdateResponse updateResponse = new UpdateResponse();
         updateResponse.setSsn(userID);
         updateResponse.setId(view.getId());
@@ -278,9 +260,6 @@ public class HTTPRequests {
     }
 
     void deleteRequest(String userID, View view){
-        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
-        //TEMPORÄR
         UpdateResponse updateResponse = new UpdateResponse();
         updateResponse.setSsn(userID);
         updateResponse.setId(view.getId());
@@ -304,9 +283,6 @@ public class HTTPRequests {
     }
 
     public void sendRequest(ShiftRecyclerViewAdapter.ShiftViewHolder holder, String ssn) {
-
-        RequestAPI requestAPI = requestAPIRetrofitter.create(RequestAPI.class);
-
         UpdateResponse updateResponse = new UpdateResponse();
         updateResponse.setSsn(ssn);
         updateResponse.setId(holder.shiftId);

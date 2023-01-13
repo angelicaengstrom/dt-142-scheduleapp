@@ -56,11 +56,6 @@ public class HomeActivity extends AppCompatActivity {
     List<Pair<String,Shift>> requestToMe = new ArrayList<>();
     private Staff me;
     String ssn;
-    /*
-    Retrofitter<ShiftAPI> shiftAPIRetrofitter = new Retrofitter<>();
-    Retrofitter<EmployeeAPI> employeeAPIRetrofitter = new Retrofitter<>();
-    Retrofitter<RequestAPI> requestAPIRetrofitter = new Retrofitter<>();*/
-    //databas
     final int MILLISECONDS = 1000;
     public static Handler handler = new Handler();
 
