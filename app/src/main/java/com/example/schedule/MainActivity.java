@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.schedule.json.Employee;
 import com.example.schedule.json.EmployeeAPI;
@@ -105,32 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
     void fetchEmployee(String id){
         httpRequests.fetchEmployee(id, MainActivity.this);
-        /*
-        Retrofitter<EmployeeAPI> retrofitter = new Retrofitter<>();
-
-        EmployeeAPI employeeAPI = retrofitter.create(EmployeeAPI.class);
-        Call<List<Employee>> call = employeeAPI.getEmployeeWithId(id);
-
-        call.enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Employee>> call, @NonNull Response<List<Employee>> response) {
-                if(!response.isSuccessful()) {
-                    showErrorMessage(getString(R.string.nogot_gick_snett));
-                    return;
-                }
-                List<Employee> employee = response.body();
-                if(Objects.requireNonNull(employee).size() == 1) {
-                    saveData();
-                    startHomeActivity();
-                }else{
-                    showErrorMessage(getString(R.string.nogot_gick_snett));
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<List<Employee>> call, @NonNull Throwable t) {
-                showErrorMessage(getString(R.string.server_fail));
-            }
-        });*/
     }
 
     void showErrorMessage(String errorMessage){

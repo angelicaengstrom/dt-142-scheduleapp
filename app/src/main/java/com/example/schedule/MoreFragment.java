@@ -93,11 +93,7 @@ public class MoreFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            SharedPreferences sharedPreferences = home.getSharedPreferences("sharedPrefs", MODE_PRIVATE);
-            sharedPreferences.edit().clear().commit();
-            Intent mainAct = new Intent(home, MainActivity.class);
-            startActivity(mainAct);
-            home.finish();
+            home.closeApp();
         }
     }
 }

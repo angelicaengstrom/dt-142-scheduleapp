@@ -124,6 +124,7 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences.edit().clear().commit();
         Intent mainAct = new Intent(HomeActivity.this, MainActivity.class);
         startActivity(mainAct);
+        finish();
     }
 
     public ArrayList<Shift> getComingShifts(){
